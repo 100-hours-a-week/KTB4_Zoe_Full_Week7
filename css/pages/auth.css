@@ -1,0 +1,126 @@
+.auth-form {
+  display: grid;
+}
+
+.auth-form .button {
+  margin-top: 4px;
+}
+
+.main--profile-edit {
+  padding-top: 161px;
+}
+
+.main--profile-edit .page-title {
+  min-height: 38px;
+  margin-bottom: 12px;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.main--profile-edit .profile-upload {
+  gap: 22px;
+}
+
+.main--profile-edit .profile-upload__label {
+  min-height: 18px;
+  line-height: 1;
+}
+
+.main--profile-edit .profile-upload__control {
+  padding: 0;
+}
+
+.profile-edit__email {
+  min-height: 18px;
+  font-size: var(--font-xs);
+  line-height: 1;
+}
+
+.main--profile-edit #nickname {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.main--profile-edit .button--ghost {
+  min-height: auto;
+  margin-top: 0;
+  background: transparent;
+  font-weight: 400;
+}
+
+.main--profile-edit .profile-edit__complete {
+  justify-self: center;
+  width: 102px;
+  height: 46px;
+  min-height: 0;
+  padding: 0;
+  margin-top: 17px;
+  border-radius: 30px;
+  line-height: 1;
+  font-weight: 400;
+  font-size: var(--font-md);
+  font : 18px;
+}
+
+.login-form {
+  gap: 8px;
+}
+
+.login-form .form__group {
+  gap: 4px;
+}
+
+.login-form .form__control {
+  min-height: 33px;
+  height: 33px;
+  padding: 7px 12px;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-sm);
+}
+
+.login-form .button {
+  margin-top: 8px;
+}
+
+.profile-upload {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.profile-upload__label {
+  justify-self: start;
+  font-size: var(--font-md);
+  font-weight: 700;
+}
+
+.profile-upload__control {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 149px;
+  height: 149px;
+  padding: 0;
+  border-radius: 50%;
+  background: #c4c4c4;
+  color: var(--color-surface);
+  font-size: 32px;
+}
+
+.profile-upload__badge {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 27px;
+  border: 1px solid var(--color-surface);
+  border-radius: 25px;
+  color: var(--color-surface);
+  font-size: var(--font-md);
+  font-weight: 700;
+}
+
+.profile-upload__helper {
+  justify-self: start;
+}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>아무 말 대잔치 - 게시글 상세</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/layout.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/pages/post-detail.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- Common Component: Header -->
+      <header class="site-header">
+        <div class="site-header__inner">
+          <a class="site-header__back" href="./posts.html" aria-label="게시글 목록으로 이동">&lt;</a>
+          <h1 class="site-header__title">아무 말 대잔치</h1>
+
+          <div class="site-header__profile profile-menu">
+            <button class="profile-menu__button" type="button" aria-label="프로필 메뉴 열기">
+              <span class="avatar">U</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="main main--post-detail">
+        <!-- Page Component: PostContent -->
+        <article class="post-detail">
+          <header class="post-detail__header">
+            <h2 class="post-detail__title">제목 1</h2>
+            <div class="post-detail__meta-row">
+              <div class="author">
+                <span class="avatar">U</span>
+                <div class="author__meta">
+                  <strong class="author__name">더미 작성자 1</strong>
+                </div>
+              </div>
+              <time class="author__date" datetime="2021-01-01T00:00">2021-01-01 00:00:00</time>
+              <div class="post-detail__actions">
+                <a class="text-button" href="./post-edit.html">수정</a>
+                <button class="text-button" type="button">삭제</button>
+              </div>
+            </div>
+          </header>
+
+          <div class="post-detail__image" role="img" aria-label="게시글 이미지 자리"></div>
+
+          <p class="post-detail__body">
+            무엇을 얘기할까요? 아무말이라면, 삶은 항상 놀라운 모험이라고 생각합니다. 우리는 매일 새로운 경험을 하고 배우며
+            성장합니다. 때로는 어려움과 도전이 있지만, 그것들이 우리를 더 강하고 지혜롭게 만듭니다. 또한 우리는 주변의 사람들과
+            연결되며 사랑과 지지를 받습니다. 그래서 우리의 삶은 소중하고 의미가 있습니다. 자연도 아름다운 이야기입니다.
+            우리 주변의 자연은 끝없는 아름다움과 신비로움을 담고 있습니다. 산, 바다, 숲, 하늘 등 모든 것이 우리를 놀라게 만들고
+            감동시킵니다. 자연은 우리의 생명과 안정을 지키며 우리에게 힘을 주는 곳입니다. 마지막으로, 지식을 향한 탐구는 항상
+            흥미로운 여정입니다. 우리는 끝없는 지식의 바다에서 배우고 발견할 수 있으며, 이것이 우리를 더 깊이 이해하고 세상을
+            더 넓게 보게 해줍니다. 그런 의미에서, 삶은 놀라움과 경이로움으로 가득 차 있습니다. 새로운 경험을 즐기고 항상 앞으로
+            나아가는 것이 중요하다고 생각합니다.
+          </p>
+
+          <!-- Page Component: PostStats -->
+          <div class="post-detail__counters" aria-label="게시글 통계">
+            <div class="counter">
+              123
+              <span class="counter__label">좋아요수</span>
+            </div>
+            <div class="counter">
+              123
+              <span class="counter__label">조회수</span>
+            </div>
+            <div class="counter">
+              123
+              <span class="counter__label">댓글</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Page Component: CommentForm -->
+        <section class="comment-form" aria-label="댓글 작성">
+          <textarea class="comment-form__textarea" placeholder="댓글을 남겨주세요!"></textarea>
+          <div class="comment-form__footer">
+            <button class="button button--pill" type="button">댓글 등록</button>
+          </div>
+        </section>
+
+        <!-- Page Component: CommentList -->
+        <section class="comment-list" aria-label="댓글 목록">
+          <article class="comment">
+            <div class="comment__row">
+              <div class="author">
+                <span class="avatar">C</span>
+                <div class="author__meta">
+                  <strong class="author__name">댓글 작성자</strong>
+                  <time class="author__date" datetime="2024-01-01T01:00">2024-01-01 01:00:00</time>
+                </div>
+              </div>
+              <div class="post-detail__actions">
+                <button class="text-button" type="button">수정</button>
+                <button class="text-button" type="button">삭제</button>
+              </div>
+            </div>
+            <p class="comment__body">댓글 내용입니다.</p>
+          </article>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

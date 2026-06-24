@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>아무 말 대잔치 - 게시글 목록</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/layout.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/pages/posts.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- Common Component: Header -->
+      <header class="site-header">
+        <div class="site-header__inner">
+          <h1 class="site-header__title">아무 말 대잔치</h1>
+
+          <!-- Common Component: ProfileMenu -->
+          <div class="site-header__profile profile-menu">
+            <button class="profile-menu__button" type="button" aria-label="프로필 메뉴 열기">
+              <span class="avatar">U</span>
+            </button>
+            <nav class="profile-menu__panel" aria-label="프로필 메뉴">
+              <a class="profile-menu__link" href="./profile-edit.html">회원정보수정</a>
+              <a class="profile-menu__link" href="./password-edit.html">비밀번호수정</a>
+              <a class="profile-menu__link" href="../index.html">로그아웃</a>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      <main class="main">
+        <!-- Page Component: PostListHeader -->
+        <section class="posts-hero" aria-labelledby="posts-title">
+          <h2 class="posts-hero__copy" id="posts-title">
+            안녕하세요,<br />
+            아무 말 대잔치 <strong>게시판</strong> 입니다.
+          </h2>
+          <a class="button button--pill" href="./post-create.html">게시글 작성</a>
+        </section>
+
+        <!-- Page Component: PostList -->
+        <section class="post-list" aria-label="게시글 목록">
+          <!-- Common Component: PostCard -->
+          <a class="post-card" href="./post-detail.html">
+            <h3 class="post-card__title">제목 1</h3>
+            <div class="post-card__meta">
+              <div class="post-card__stats">
+                <span>좋아요 0</span>
+                <span>댓글 0</span>
+                <span>조회수 0</span>
+              </div>
+              <time datetime="2024-01-01T00:00">2024-01-01 00:00:00</time>
+            </div>
+            <div class="post-card__author">
+              <span class="avatar">U</span>
+              <span>더미 작성자 1</span>
+            </div>
+          </a>
+
+          <a class="post-card" href="./post-detail.html">
+            <h3 class="post-card__title">무엇을 얘기해도 좋은 커뮤니티 글 제목</h3>
+            <div class="post-card__meta">
+              <div class="post-card__stats">
+                <span>좋아요 12</span>
+                <span>댓글 4</span>
+                <span>조회수 98</span>
+              </div>
+              <time datetime="2024-01-02T12:30">2024-01-02 12:30:00</time>
+            </div>
+            <div class="post-card__author">
+              <span class="avatar">A</span>
+              <span>더미 작성자 2</span>
+            </div>
+          </a>
+
+          <a class="post-card" href="./post-detail.html">
+            <h3 class="post-card__title">오늘의 아무 말</h3>
+            <div class="post-card__meta">
+              <div class="post-card__stats">
+                <span>좋아요 1</span>
+                <span>댓글 2</span>
+                <span>조회수 33</span>
+              </div>
+              <time datetime="2024-01-03T18:15">2024-01-03 18:15:00</time>
+            </div>
+            <div class="post-card__author">
+              <span class="avatar">B</span>
+              <span>더미 작성자 3</span>
+            </div>
+          </a>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
