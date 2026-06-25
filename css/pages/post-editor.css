@@ -86,7 +86,18 @@
 }
 
 @media (max-width: 620px) {
+  .main--editor {
+    width: min(calc(100% - 32px), var(--container-content));
+    padding-right: 0;
+    padding-left: 0;
+  }
+
   .main--post-create {
     width: min(calc(100% - 32px), 570px);
+  }
+
+  .file-field {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

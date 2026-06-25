@@ -58,8 +58,7 @@
   border-radius: 30px;
   line-height: 1;
   font-weight: 400;
-  font-size: var(--font-md);
-  font : 18px;
+  font-size: 18px;
 }
 
 .login-form {
@@ -123,4 +122,20 @@
 
 .profile-upload__helper {
   justify-self: start;
+}
+
+@media (max-width: 520px) {
+  .main--auth {
+    width: min(calc(100% - 32px), var(--container-auth));
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .main--profile-edit {
+    padding-top: 64px;
+  }
+
+  .main--profile-edit .page-title {
+    font-size: var(--font-xl);
+  }
 }

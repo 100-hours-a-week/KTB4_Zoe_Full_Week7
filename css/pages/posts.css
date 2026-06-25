@@ -78,8 +78,34 @@
     flex-direction: column;
   }
 
+  .posts-hero .button {
+    align-self: flex-end;
+  }
+
   .posts-hero__copy,
   .post-card__title {
     font-size: 20px;
+  }
+
+  .post-card {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .post-card__title,
+  .post-card__meta,
+  .post-card__author {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .post-card__meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .post-card__stats {
+    flex-wrap: wrap;
   }
 }

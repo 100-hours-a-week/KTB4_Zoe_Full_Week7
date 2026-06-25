@@ -111,24 +111,11 @@ body {
 }
 
 @media (max-width: 520px) {
-  .site-header {
-    height: 80px;
-  }
-
-  .site-header__title {
-    font-size: 24px;
-  }
-
   .site-header__inner {
     width: min(calc(100% - 32px), 544px);
   }
 
   .site-header__back {
     left: 0;
-  }
-
-  .main,
-  .main--auth {
-    padding-top: 32px;
   }
 }

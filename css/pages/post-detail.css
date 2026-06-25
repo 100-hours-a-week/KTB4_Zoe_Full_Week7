@@ -152,7 +152,6 @@
 @media (max-width: 520px) {
   .main--post-detail {
     width: min(calc(100% - 32px), 544px);
-    padding-top: 32px;
   }
 
   .post-detail__meta-row,
@@ -164,9 +163,18 @@
   .post-detail__counters {
     width: 100%;
     flex-wrap: wrap;
+    min-height: auto;
   }
 
   .comment-form {
     width: 100%;
+  }
+
+  .comment-form__textarea {
+    min-height: 132px;
+  }
+
+  .comment__body {
+    padding-left: 0;
   }
 }
