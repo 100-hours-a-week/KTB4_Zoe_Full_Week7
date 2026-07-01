@@ -19,6 +19,10 @@
   padding-left: 24px;
 }
 
+.posts-hero .button:not(:hover){
+  background: var(--color-primary);
+}
+
 .posts-hero__copy strong {
   font-weight: 700;
 }
