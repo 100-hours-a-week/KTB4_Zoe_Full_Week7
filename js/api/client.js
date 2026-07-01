@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080";
+import { BASE_URL } from "../config.js";
 
 export async function apiClient( path, method = "GET", body = null,) {
     
