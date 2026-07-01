@@ -139,3 +139,7 @@
     font-size: var(--font-xl);
   }
 }
+
+.avatar[hidden] {
+  display: none !important;
+}
