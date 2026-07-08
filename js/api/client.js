@@ -1,25 +1,29 @@
 import { BASE_URL } from "../config.js";
+import { getCsrfHeaders } from "./csrf.js";
+import { createRequestBody } from "./requestBody.js";
 
-export async function apiClient( path, method = "GET", body = null,) {
-    
-    const isFormData = body instanceof FormData;
- 
-    const response = await fetch(`${BASE_URL}${path}`, {
-        method,
-        credentials: "include",
-        headers: isFormData ? { } : { "Content-Type" : "application/json" },
-        body: isFormData ? body : body ? JSON.stringify(body) : undefined
-    });
+export async function apiClient(path, method = "GET", body = null) {
+  const requestBody = createRequestBody(body);
+  const csrfHeaders = await getCsrfHeaders(method);
 
-    const data = await response.json();
+  const response = await fetch(`${BASE_URL}${path}`, {
+    method,
+    credentials: "include",
+    headers: {
+      ...requestBody.headers,
+      ...csrfHeaders,
+    },
+    body: requestBody.body,
+  });
 
-    if (!response.ok) {
-        const error =  new Error(data.message);
-        error.status = response.status;
-        error.data = data.data;
-        throw error;
-    }
+  const data = await response.json();
 
-    return data;
+  if (!response.ok) {
+    const error = new Error(data.message);
+    error.status = response.status;
+    error.data = data.data;
+    throw error;
+  }
 
+  return data;
 }
