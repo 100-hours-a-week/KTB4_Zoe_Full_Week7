@@ -35,7 +35,6 @@ const content = document.getElementById("content");
 const postActions = document.getElementById("post-actions");
 const postEditLink = document.getElementById("post-edit-link");
 const postDeleteButton = document.getElementById("post-delete-button");
-const ownerChip = document.getElementById("post-owner-chip");
 
 const likeCount = document.getElementById("like-count");
 const likeButton = document.getElementById("like-button");
@@ -90,9 +89,6 @@ function updatePostActionsVisibility(post) {
 
     postActions.hidden = !ownsPost;
     document.body.dataset.owner = ownsPost ? "mine" : "other";
-    ownerChip.textContent = ownsPost ? "내가 쓴 글" : "다른 사람의 글";
-    ownerChip.classList.toggle("section-chip--mine", ownsPost);
-    ownerChip.classList.toggle("section-chip--other", !ownsPost);
 }
 
 //게시글 fetch
