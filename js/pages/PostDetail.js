@@ -279,10 +279,10 @@ likeButton.addEventListener("click", async(e) => {
     const method = nextLiked ? "POST" : "DELETE";
 
     try{
-        await apiClient(`/likes/posts/${postId}`, method);
+        const response = await apiClient(`/likes/posts/${postId}`, method);
 
-        isLiked = nextLiked;
-        currentLikeCount += nextLiked ? 1 : -1;
+        isLiked = response.data.is_liked;
+        currentLikeCount = response.data.like_count;
         updateLikeButtonState();
     }catch(e){
         console.error(e);
