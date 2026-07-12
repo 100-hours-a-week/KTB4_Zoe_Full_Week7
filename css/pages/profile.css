@@ -1,0 +1,67 @@
+.profile-edit__avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+
+.profile-edit__avatar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.profile-edit__link-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--color-text-soft);
+}
+
+.profile-edit__link-row span:last-child {
+  color: var(--color-muted-line);
+  font-size: var(--font-lg);
+}
+
+.profile-edit__link-row:hover {
+  background: var(--color-surface-mute);
+}
+
+.profile-edit__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.profile-edit__actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Password edit variant — reuses profile card */
+.password-edit__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+@media (max-width: 520px) {
+  .profile-edit__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .profile-edit__actions {
+    justify-content: flex-end;
+  }
+}
