@@ -7,11 +7,14 @@ import { getComments, createComment, updateComment, deleteComment } from "../api
 import { Comment } from "../components/Comment.js";
 import { createConfirmModal } from "../components/ConfirmModal.js";
 import { bindInputsToButton } from "../utils/bindInputsToButton.js";
-import { isOwner } from "../utils/authStorage.js";
+import { getCurrentUserId, isOwner } from "../utils/authStorage.js";
 import { savePostEditData } from "../utils/postEditStorage.js";
 import { renderHeader } from "../components/Header.js";
 
 const postId = getQueryParam("id");
+const currentUserId = getCurrentUserId();
+
+document.body.dataset.auth = currentUserId === null ? "guest" : "user";
 
 renderHeader({
     backHref: "./posts.html",
@@ -32,6 +35,7 @@ const content = document.getElementById("content");
 const postActions = document.getElementById("post-actions");
 const postEditLink = document.getElementById("post-edit-link");
 const postDeleteButton = document.getElementById("post-delete-button");
+const ownerChip = document.getElementById("post-owner-chip");
 
 const likeCount = document.getElementById("like-count");
 const likeButton = document.getElementById("like-button");
@@ -61,7 +65,6 @@ let isCommentObserverStarted = false;
 
 function updateLikeButtonState() {
     likeButton.dataset.liked = String(isLiked);
-    likeButton.style.backgroundColor = isLiked ? "#aca0eb" : "#d9d9d9";
     likeCount.textContent = countFormat(currentLikeCount);
 }
 
@@ -83,7 +86,13 @@ function getPostWriterId(post) {
 }
 
 function updatePostActionsVisibility(post) {
-    postActions.hidden = !isOwner(getPostWriterId(post));
+    const ownsPost = isOwner(getPostWriterId(post));
+
+    postActions.hidden = !ownsPost;
+    document.body.dataset.owner = ownsPost ? "mine" : "other";
+    ownerChip.textContent = ownsPost ? "내가 쓴 글" : "다른 사람의 글";
+    ownerChip.classList.toggle("section-chip--mine", ownsPost);
+    ownerChip.classList.toggle("section-chip--other", !ownsPost);
 }
 
 //게시글 fetch
