@@ -5,6 +5,8 @@ export const ROUTES = {
   postDetail: (id) => `/pages/post-detail.html?id=${id}`,
   postCreate: "/pages/post-create.html",
   postEdit: (id) => `/pages/post-edit.html?id=${id}`,
+  mypage: "/pages/mypage.html",
+  search: (query = "") => `/pages/search.html?q=${encodeURIComponent(query)}`,
   profileEdit: "/pages/profile-edit.html",
   passwordEdit: "/pages/password-edit.html",
 };
