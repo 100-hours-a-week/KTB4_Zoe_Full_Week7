@@ -1,0 +1,125 @@
+.search {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.search__summary {
+  font-size: var(--font-base);
+  color: var(--color-text-soft);
+  margin-bottom: 4px;
+}
+
+.search__summary b {
+  color: var(--color-primary);
+}
+
+.search__summary .search__summary-count {
+  color: var(--color-text);
+}
+
+.search__list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.search__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  color: inherit;
+}
+
+.search__card-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.search__card-meta .avatar {
+  width: 34px;
+  height: 34px;
+}
+
+.search__card-name {
+  font-size: var(--font-md);
+  font-weight: 700;
+  color: var(--color-text-strong);
+}
+
+.search__card-time {
+  font-size: var(--font-xs);
+  color: var(--color-muted-soft);
+}
+
+.search__card-title {
+  font-size: var(--font-lg);
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.search__card-body {
+  font-size: var(--font-md);
+  color: var(--color-text-soft);
+  line-height: 1.6;
+}
+
+.hl {
+  background: var(--color-highlight);
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+/* Empty state */
+.search__empty {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 64px 40px;
+  text-align: center;
+}
+
+.search__empty-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: #F3EEE9;
+  color: var(--color-muted-line);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 20px;
+}
+
+.search__empty-title {
+  font-size: var(--font-lg);
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.search__empty-copy {
+  font-size: var(--font-md);
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.search__empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Body state toggling */
+body[data-state="empty"] .search__list,
+body[data-state="empty"] .search__summary {
+  display: none;
+}
+
+body:not([data-state="empty"]) .search__empty {
+  display: none;
+}

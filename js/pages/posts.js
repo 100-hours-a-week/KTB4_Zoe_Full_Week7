@@ -1,16 +1,19 @@
 import { apiClient } from "../api/client.js";
 import { PostCard } from "../components/PostCard.js";
-import { clearCurrentUser } from "../utils/authStorage.js";
 import { createInfiniteScroll } from "../utils/infiniteScroll.js";
 import { renderHeader } from "../components/Header.js";
+import { getCurrentUserId } from "../utils/authStorage.js";
+import { h, render } from "../lib/vdom.js";
+
+document.body.dataset.auth = getCurrentUserId() === null ? "guest" : "user";
 
 renderHeader({
     showProfile: true,
     showProfileMenu: true,
 });
 
-const postList = document.getElementById("post-list");
-const logoutLink = document.querySelector('.profile-menu__link[href="../index.html"]');
+const postList = document.querySelector(".post-list");
+const sortButtons = document.querySelectorAll("[data-post-sort]");
 
 const POST_PAGE_SIZE = 20;
 
@@ -19,15 +22,31 @@ let hasNextPost = true;
 let isPostLoading = false;
 let isPostObserverStarted = false;
 
-function renderPosts(posts, { append = false } = {}) {
-    const postMarkup = posts.map((post) => PostCard(post)).join("");
+let renderedPosts = [];
+let currentSort = "latest";
 
 const infiniteScroll = createInfiniteScroll({
     anchor: postList,
     onLoadMore: () => loadPosts({append: true}),
 });
 
-    postList.innerHTML = postMarkup;
+function PostList(posts) {
+    return h(
+        "div",
+        { class: "post-list__items" },
+        ...posts.map((post) => PostCard(post))
+    );
+}
+
+function getVisiblePosts() {
+    if (currentSort !== "popular") return renderedPosts;
+
+    return [...renderedPosts].sort((a, b) => (b.like_count ?? 0) - (a.like_count ?? 0));
+}
+
+function renderPosts(posts, { append = false } = {}) {
+    renderedPosts = append ? [...renderedPosts, ...posts] : posts;
+    render(PostList(getVisiblePosts()), postList);
 }
 
 function getPostsPath() {
@@ -68,7 +87,13 @@ async function init() {
 
 document.addEventListener("DOMContentLoaded", init);
 
-
-logoutLink?.addEventListener("click", () => {
-    clearCurrentUser();
+sortButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        currentSort = button.dataset.postSort;
+        sortButtons.forEach((item) => {
+            item.classList.toggle("pill-tab--active", item === button);
+            item.setAttribute("aria-pressed", String(item === button));
+        });
+        render(PostList(getVisiblePosts()), postList);
+    });
 });
