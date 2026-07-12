@@ -224,27 +224,6 @@ body {
   color: var(--color-muted);
 }
 
-/* Section chip above cards */
-.section-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--font-xs);
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: 20px;
-}
-
-.section-chip--mine {
-  color: var(--color-primary-hover);
-  background: var(--color-primary-soft);
-}
-
-.section-chip--other {
-  color: var(--color-muted);
-  background: #EFEAE5;
-}
-
 @media (max-width: 720px) {
   .site-header__inner {
     padding: 0 16px;
