@@ -1,6 +1,8 @@
+import { apiClient } from "../api/client.js";
 import { BASE_URL } from "../config.js";
 import { ROUTES, navigateTo } from "../router.js";
 import { clearCurrentUser, getCurrentUser } from "../utils/authStorage.js";
+import { showToast } from "./Toast.js";
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -83,7 +85,7 @@ function getProfileMarkup({ showProfile, showProfileMenu }) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
           정보 수정
         </a>
-        <a class="profile-menu__link profile-menu__link--muted" href="${ROUTES.login}" data-header-logout>
+        <a class="profile-menu__link profile-menu__link--muted" data-header-logout>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
           로그아웃
         </a>
@@ -99,7 +101,7 @@ export function renderHeader({
   backId = "",
   showProfile = false,
   showProfileMenu = false,
-  showSearch = true,
+  showSearch = false,
 } = {}) {
   if (!root) return;
 
@@ -128,8 +130,14 @@ export function renderHeader({
     </header>
   `;
 
-  root.querySelector("[data-header-logout]")?.addEventListener("click", () => {
-    clearCurrentUser();
+  root.querySelector("[data-header-logout]")?.addEventListener("click", async() => {
+    try{
+      await apiClient("/auth/logout","POST",);
+      clearCurrentUser();
+      window.location.href = ROUTES.login;
+    }catch (e){
+      showToast(e)
+    }
   });
 
   const searchForm = root.querySelector("[data-header-search]");
