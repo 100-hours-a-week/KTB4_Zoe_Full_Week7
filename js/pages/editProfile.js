@@ -42,7 +42,7 @@ function getProfileImageSrc(profileImage) {
 function fillProfileForm() {
   const user = getCurrentUser();
 
-  profileEmail.textContent = user.email ?? "";
+  profileEmail.value = user.email ?? "";
   nicknameInput.value = user.nickname ?? "";
 
   renderProfileAvatar({

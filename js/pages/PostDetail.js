@@ -7,11 +7,14 @@ import { getComments, createComment, updateComment, deleteComment } from "../api
 import { Comment } from "../components/Comment.js";
 import { createConfirmModal } from "../components/ConfirmModal.js";
 import { bindInputsToButton } from "../utils/bindInputsToButton.js";
-import { isOwner } from "../utils/authStorage.js";
+import { getCurrentUserId, isOwner } from "../utils/authStorage.js";
 import { savePostEditData } from "../utils/postEditStorage.js";
 import { renderHeader } from "../components/Header.js";
 
 const postId = getQueryParam("id");
+const currentUserId = getCurrentUserId();
+
+document.body.dataset.auth = currentUserId === null ? "guest" : "user";
 
 renderHeader({
     backHref: "./posts.html",
@@ -61,7 +64,6 @@ let isCommentObserverStarted = false;
 
 function updateLikeButtonState() {
     likeButton.dataset.liked = String(isLiked);
-    likeButton.style.backgroundColor = isLiked ? "#aca0eb" : "#d9d9d9";
     likeCount.textContent = countFormat(currentLikeCount);
 }
 
@@ -83,7 +85,10 @@ function getPostWriterId(post) {
 }
 
 function updatePostActionsVisibility(post) {
-    postActions.hidden = !isOwner(getPostWriterId(post));
+    const ownsPost = isOwner(getPostWriterId(post));
+
+    postActions.hidden = !ownsPost;
+    document.body.dataset.owner = ownsPost ? "mine" : "other";
 }
 
 //게시글 fetch
@@ -274,10 +279,10 @@ likeButton.addEventListener("click", async(e) => {
     const method = nextLiked ? "POST" : "DELETE";
 
     try{
-        await apiClient(`/likes/posts/${postId}`, method);
+        const response = await apiClient(`/likes/posts/${postId}`, method);
 
-        isLiked = nextLiked;
-        currentLikeCount += nextLiked ? 1 : -1;
+        isLiked = response.data.is_liked;
+        currentLikeCount = response.data.like_count;
         updateLikeButtonState();
     }catch(e){
         console.error(e);

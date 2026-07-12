@@ -1,10 +1,9 @@
 import { apiClient } from "./client.js";
 import { getCookie } from "../utils/getCookie.js";
 
-let csrfToken = null;
-let csrfHeaderName = "X-XSRF-TOKEN";
-
 const SAFE_METHODS = ["GET", "HEAD", "OPTIONS", "TRACE"];
+const CSRF_COOKIE_NAME = "XSRF-TOKEN";
+const CSRF_HEADER_NAME = "X-XSRF-TOKEN";
 
 function isUnsafeMethod(method) {
   return !SAFE_METHODS.includes(method.toUpperCase());
@@ -15,19 +14,17 @@ export async function getCsrfHeaders(method) {
     return {};
   }
 
+  let csrfToken = getCookie(CSRF_COOKIE_NAME);
+
   if (!csrfToken) {
     await apiClient("/csrf");
 
-    csrfToken = getCookie("XSRF-TOKEN");
-    console.log(csrfToken);
-    csrfHeaderName = "X-XSRF-TOKEN";
+    csrfToken = getCookie(CSRF_COOKIE_NAME);
   }
 
   return {
-    [csrfHeaderName]: csrfToken,
+    [CSRF_HEADER_NAME]: csrfToken,
   };
 }
 
-export function clearCsrfToken() {
-  csrfToken = null;
-}
+export function clearCsrfToken() {}

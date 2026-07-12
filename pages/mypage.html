@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Votle - 마이페이지</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/layout.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/pages/mypage.css" />
+    <script src="../js/pages/mypage.js" type="module"></script>
+  </head>
+  <body data-auth="user">
+    <div class="app-shell">
+      <div id="header-root"></div>
+
+      <main class="main main--mypage">
+        <section class="mypage" aria-labelledby="mypage-title">
+          <h2 class="sr-only" id="mypage-title">마이페이지</h2>
+
+          <div class="mypage__profile">
+            <span id="mypage-avatar" class="avatar avatar--lg" aria-hidden="true">봄</span>
+            <div class="mypage__profile-info">
+              <div id="mypage-nickname" class="mypage__profile-name">봄날의곰</div>
+              <div id="mypage-email" class="mypage__profile-sub">hello@votle.kr</div>
+              <div class="mypage__stats">
+                <div>
+                  <span class="mypage__stat-num">12</span>
+                  <span class="mypage__stat-label">작성글</span>
+                </div>
+                <div>
+                  <span class="mypage__stat-num">302</span>
+                  <span class="mypage__stat-label">받은 좋아요</span>
+                </div>
+                <div>
+                  <span class="mypage__stat-num">86</span>
+                  <span class="mypage__stat-label">댓글</span>
+                </div>
+              </div>
+            </div>
+            <a class="button button--pill button--ghost" href="./profile-edit.html">정보 수정</a>
+          </div>
+
+          <nav class="mypage__tabs" aria-label="마이페이지 탭">
+            <button type="button" class="mypage__tab mypage__tab--active">내가 쓴 글</button>
+            <button type="button" class="mypage__tab">좋아요한 글</button>
+          </nav>
+
+          <section class="mypage__list" aria-label="내가 쓴 글">
+            <a class="mypage__card" href="./post-detail.html?id=1">
+              <div class="mypage__card-meta">
+                <span class="mypage__card-time">10분 전</span>
+              </div>
+              <div class="mypage__card-title">주말에 갑자기 시간이 생겼다면?</div>
+              <div class="mypage__card-stats">
+                <span>좋아요 124</span>
+                <span>댓글 38</span>
+              </div>
+            </a>
+            <a class="mypage__card" href="./post-detail.html?id=2">
+              <div class="mypage__card-meta">
+                <span class="mypage__card-time">2일 전</span>
+              </div>
+              <div class="mypage__card-title">점심 메뉴, 한식 vs 양식?</div>
+              <div class="mypage__card-stats">
+                <span>좋아요 62</span>
+                <span>댓글 15</span>
+              </div>
+            </a>
+          </section>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

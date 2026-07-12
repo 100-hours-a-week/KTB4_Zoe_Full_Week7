@@ -1,3 +1,5 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
 *,
 *::before,
 *::after {
@@ -28,9 +30,13 @@ ol {
 body {
   min-width: 320px;
   min-height: 100vh;
-  font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+  font-family: var(--font-family);
+  font-size: var(--font-base);
+  color: var(--color-text);
   line-height: 1.5;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
