@@ -1,0 +1,126 @@
+.mypage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mypage__profile {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.mypage__profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mypage__profile-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.mypage__profile-sub {
+  font-size: var(--font-sm);
+  color: var(--color-muted-soft);
+}
+
+.mypage__stats {
+  display: flex;
+  gap: 24px;
+  margin-top: 4px;
+}
+
+.mypage__stat-num {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.mypage__stat-label {
+  font-size: var(--font-sm);
+  color: var(--color-text-soft);
+  margin-left: 4px;
+}
+
+.mypage__tabs {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mypage__tab {
+  background: transparent;
+  border: 0;
+  padding: 0 0 12px;
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--color-muted-soft);
+  cursor: pointer;
+}
+
+.mypage__tab--active {
+  font-weight: 800;
+  color: var(--color-text);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.mypage__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mypage__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  color: inherit;
+}
+
+.mypage__card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mypage__card-time {
+  font-size: var(--font-xs);
+  color: var(--color-muted-soft);
+}
+
+.mypage__card-title {
+  font-size: var(--font-base);
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.mypage__card-stats {
+  display: flex;
+  gap: 16px;
+  font-size: var(--font-xs);
+  color: var(--color-muted-soft);
+}
+
+@media (max-width: 520px) {
+  .mypage__profile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .mypage__stats {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
