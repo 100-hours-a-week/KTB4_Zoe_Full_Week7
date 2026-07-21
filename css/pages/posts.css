@@ -36,6 +36,13 @@
   gap: 14px;
 }
 
+.post-list__skeleton,
+.post-list__next-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 /* Card shape (Votle) — applied to any .post-card the JS emits */
 .post-card {
   display: block;
@@ -49,6 +56,10 @@
 
 .post-card:hover {
   border-color: var(--color-primary-line);
+}
+
+.post-card--skeleton:hover {
+  border-color: var(--color-border);
 }
 
 .post-card__title {

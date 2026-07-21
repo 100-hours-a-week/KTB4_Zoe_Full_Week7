@@ -1,7 +1,7 @@
 import { apiClient } from "../api/client.js";
 import { getQueryParam, ROUTES, navigateTo } from "../router.js";
 import { BASE_URL } from "../config.js";
-import { handlePostDetailError, handleCommentError } from "../errors/postDetailErrors.js";
+import { getErrorMessage } from "../errors/messages.js";
 import { countFormat } from "../utils/countFormat.js";
 import { getComments, createComment, updateComment, deleteComment } from "../api/comments.js";
 import { Comment } from "../components/Comment.js";
@@ -10,6 +10,8 @@ import { bindInputsToButton } from "../utils/bindInputsToButton.js";
 import { getCurrentUserId, isOwner } from "../utils/authStorage.js";
 import { savePostEditData } from "../utils/postEditStorage.js";
 import { renderHeader } from "../components/Header.js";
+import { CommentListSkeleton, PostDetailSkeleton } from "../components/Skeletons.js";
+import { createButtonLoading, createDelayedLoading } from "../utils/delayedLoading.js";
 
 const postId = getQueryParam("id");
 const currentUserId = getCurrentUserId();
@@ -22,6 +24,9 @@ renderHeader({
     showProfile: true,
     showProfileMenu: true,
 });
+
+const postDetailWrapper = document.querySelector(".post-detail-wrapper");
+const postDetail = document.querySelector(".post-detail");
 
 //게시글 상세 영역
 const title = document.getElementById("title");
@@ -51,6 +56,7 @@ const confirmModal = createConfirmModal();
 const commentSentinel = document.createElement("div");
 commentSentinel.className = "infinite-scroll-sentinel";
 commentList.after(commentSentinel);
+postDetail.hidden = true;
 
 //좋아요 여부
 let isLiked = false;
@@ -61,6 +67,53 @@ let currentCommentPage = 0;
 let hasNextComment = true;
 let isCommentLoading = false;
 let isCommentObserverStarted = false;
+let commentLoadingMode = "initial";
+let isCommentSubmitting = false;
+let isLikeSubmitting = false;
+
+const postSkeleton = createDelayedLoading({
+    onShow: () => {
+        postDetailWrapper.querySelector(".post-detail--skeleton")?.remove();
+        postDetail.insertAdjacentHTML("beforebegin", PostDetailSkeleton());
+    },
+    onHide: () => {
+        postDetailWrapper.querySelector(".post-detail--skeleton")?.remove();
+    },
+});
+
+const commentSkeleton = createDelayedLoading({
+    onShow: () => {
+        commentList.setAttribute("aria-busy", "true");
+
+        if (commentLoadingMode === "next") {
+            commentList.insertAdjacentHTML("beforeend", CommentListSkeleton(1));
+            return;
+        }
+
+        commentList.innerHTML = CommentListSkeleton();
+    },
+    onHide: () => {
+        commentList.removeAttribute("aria-busy");
+        commentList.querySelectorAll(".comment-list__skeleton").forEach((element) => element.remove());
+    },
+});
+
+const commentButtonLoading = createButtonLoading(commentButton, {
+    label: "댓글 처리 중",
+});
+
+const likeButtonLoading = createButtonLoading(likeButton, {
+    label: "좋아요 처리 중",
+});
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
 
 function updateLikeButtonState() {
     likeButton.dataset.liked = String(isLiked);
@@ -128,6 +181,30 @@ function fetchComments(comments, { append = false } = {}) {
     commentList.innerHTML = commentMarkup;
 }
 
+function renderPostError(error) {
+    const message = getErrorMessage(error, "게시글을 불러오지 못했습니다.");
+
+    postDetail.hidden = true;
+    postDetailWrapper.querySelector(".post-detail-error")?.remove();
+    postDetail.insertAdjacentHTML("beforebegin", `
+        <section class="post-detail-error" role="alert">
+            <p class="post-detail-error__message">${escapeHtml(message)}</p>
+            <button class="button button--pill" type="button" data-post-retry>다시 시도</button>
+        </section>
+    `);
+}
+
+function renderCommentError(error) {
+    const message = getErrorMessage(error, "댓글을 불러오지 못했습니다.");
+
+    commentList.innerHTML = `
+        <section class="comment-list__error" role="alert">
+            <p class="form__helper">${escapeHtml(message)}</p>
+            <button class="button button--pill-sm button--ghost" type="button" data-comment-retry>다시 시도</button>
+        </section>
+    `;
+}
+
 function updateCommentPagination(pagination, requestedPage) {
     currentCommentPage = pagination?.page ?? requestedPage;
     hasNextComment = Boolean(pagination?.has_next);
@@ -154,21 +231,30 @@ function startCommentEdit(comment) {
 }
 
 async function reloadComments() {
-    currentCommentPage = 0;
-    hasNextComment = true;
-    commentList.innerHTML = "";
-    await loadComments({ page: 1 });
+    try {
+        const commentResponse = await getComments(postId, 1, COMMENT_PAGE_SIZE);
+        fetchComments(commentResponse.data.comments);
+        updateCommentPagination(commentResponse.data.pagination, 1);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 async function loadComments({ page = currentCommentPage + 1, append = false } = {}) {
     if (isCommentLoading || !hasNextComment) return;
 
     isCommentLoading = true;
+    commentLoadingMode = append ? "next" : "initial";
+    commentSkeleton.start();
 
     try {
         const commentResponse = await getComments(postId, page, COMMENT_PAGE_SIZE);
+        commentSkeleton.stop();
         fetchComments(commentResponse.data.comments, { append });
         updateCommentPagination(commentResponse.data.pagination, page);
+    } catch (error) {
+        commentSkeleton.stop();
+        if (!append) renderCommentError(error);
     } finally {
         isCommentLoading = false;
     }
@@ -180,30 +266,30 @@ async function loadComments({ page = currentCommentPage + 1, append = false } = 
 async function init() {
 
   if (!postId) {
-    handlePostDetailError(new Error("post_not_found"));
+    renderPostError(new Error("post_not_found"));
     return;
   }
 
-  const [postResult, commentsResult] = await Promise.allSettled([
-    apiClient(`/posts/${postId}`),
-    getComments(postId, 1, COMMENT_PAGE_SIZE),
-  ]);
+  postSkeleton.start();
+  const postRequest = apiClient(`/posts/${postId}`);
+  const commentsRequest = loadComments({ page: 1 });
 
-  if (postResult.status === "rejected") {
-    handlePostDetailError(postResult.reason);
-    return;
-  }
+  postRequest
+    .then((postResponse) => {
+        postSkeleton.stop();
+        fetchPost(postResponse.data);
+        postDetail.hidden = false;
+    })
+    .catch((error) => {
+        postSkeleton.stop();
+        renderPostError(error);
+    });
 
-  fetchPost(postResult.value.data);
+  commentsRequest.then(() => {
+    if (!isCommentObserverStarted && hasNextComment) startCommentObserver();
+  });
 
-  if (commentsResult.status === "fulfilled") {
-    fetchComments(commentsResult.value.data.comments);
-    updateCommentPagination(commentsResult.value.data.pagination, 1);
-    startCommentObserver();
-    return;
-  }
-
-  handleCommentError(commentsResult.reason, commentList);
+  await Promise.allSettled([postRequest, commentsRequest]);
 }
 document.addEventListener('DOMContentLoaded', init);
 
@@ -212,8 +298,13 @@ const updateCommentButtonState = bindInputsToButton([commentInput], commentButto
 //댓글 등록 이벤트
 commentButton.addEventListener("click", async(e)=>{
     e.preventDefault();
+    if (isCommentSubmitting) return;
 
     const content = commentInput.value.trim();
+    if (!content) return;
+
+    isCommentSubmitting = true;
+    commentButtonLoading.start();
 
     try{
         if (editingCommentId) {
@@ -229,6 +320,10 @@ commentButton.addEventListener("click", async(e)=>{
         updateCommentButtonState();
     }catch(e){
         console.error(e);
+    } finally {
+        isCommentSubmitting = false;
+        commentButtonLoading.stop();
+        updateCommentButtonState();
     }
 })
 
@@ -274,9 +369,12 @@ commentList.addEventListener("click", (event) => {
 //좋아요 버튼 이벤트
 likeButton.addEventListener("click", async(e) => {
     e.preventDefault();
+    if (isLikeSubmitting) return;
 
     const nextLiked = !isLiked;
     const method = nextLiked ? "POST" : "DELETE";
+    isLikeSubmitting = true;
+    likeButtonLoading.start();
 
     try{
         const response = await apiClient(`/likes/posts/${postId}`, method);
@@ -286,8 +384,24 @@ likeButton.addEventListener("click", async(e) => {
         updateLikeButtonState();
     }catch(e){
         console.error(e);
+    } finally {
+        isLikeSubmitting = false;
+        likeButtonLoading.stop();
     }
 })
+
+postDetailWrapper.addEventListener("click", (event) => {
+    if (!event.target.closest("[data-post-retry]")) return;
+
+    postDetailWrapper.querySelector(".post-detail-error")?.remove();
+    init();
+});
+
+commentList.addEventListener("click", (event) => {
+    if (!event.target.closest("[data-comment-retry]")) return;
+
+    reloadComments();
+});
 
 const commentObserver = new IntersectionObserver((entries) => {
     if (!entries[0].isIntersecting) return;
