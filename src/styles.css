@@ -636,10 +636,21 @@
     @apply min-h-[50px] rounded-xl px-5 text-[13px];
   }
 
-  .login-comment-prompt,
   .empty-state,
   .error-state {
     @apply rounded-[18px] border border-border bg-white p-8 text-center text-sm text-muted;
+  }
+
+  .login-comment-prompt {
+    @apply mb-[26px] flex h-[120px] w-full flex-col items-center rounded-[18px] border border-[#eef0f2] bg-[#f7f8fa] p-[25px] text-center;
+  }
+
+  .login-comment-prompt p {
+    @apply h-[31px] pb-[14px] text-sm font-normal text-[#6b625c];
+  }
+
+  .login-comment-prompt button {
+    @apply flex h-[39px] items-center rounded-[22px] bg-primary px-[26px] py-[11px] text-sm font-extrabold leading-normal text-white;
   }
 
   .comment-list {

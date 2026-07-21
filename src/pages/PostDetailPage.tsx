@@ -316,9 +316,12 @@ export function PostDetailPage() {
                     </Button>
                   </form>
                 ) : (
-                  <button className="login-comment-prompt" type="button" onClick={() => setLoginPromptOpen(true)}>
-                    댓글을 남기려면 로그인이 필요해요
-                  </button>
+                  <section className="login-comment-prompt">
+                    <p>댓글을 남기려면 로그인이 필요해요</p>
+                    <button type="button" onClick={() => setLoginPromptOpen(true)}>
+                      로그인하고 댓글쓰기
+                    </button>
+                  </section>
                 )}
 
                 {showCommentSkeleton ? <CommentListSkeleton /> : null}
