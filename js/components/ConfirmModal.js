@@ -1,3 +1,5 @@
+import { createButtonLoading } from "../utils/delayedLoading.js";
+
 export function createConfirmModal() {
   const modal = document.createElement("div");
   modal.className = "confirm-modal";
@@ -20,6 +22,9 @@ export function createConfirmModal() {
   const description = modal.querySelector(".confirm-modal__description");
   const confirmButton = modal.querySelector(".confirm-modal__button--confirm");
   const closeButtons = modal.querySelectorAll("[data-modal-close]");
+  const confirmLoading = createButtonLoading(confirmButton, {
+    label: "확인 처리 중",
+  });
 
   let onConfirm = null;
 
@@ -44,8 +49,14 @@ export function createConfirmModal() {
   confirmButton.addEventListener("click", async () => {
     if (!onConfirm) return;
 
-    await onConfirm();
-    close();
+    confirmLoading.start();
+
+    try {
+      await onConfirm();
+      close();
+    } finally {
+      confirmLoading.stop();
+    }
   });
 
   return { open, close };

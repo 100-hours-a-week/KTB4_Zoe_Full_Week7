@@ -8,6 +8,7 @@ import { hideHelper, showHelper } from "../utils/helperText.js";
 import { renderHeader } from "../components/Header.js";
 import { handleProfileEditError, handleWithdrawError } from "../errors/profileErrors.js";
 import { showToast } from "../components/Toast.js";
+import { createButtonLoading } from "../utils/delayedLoading.js";
 
 renderHeader({
   backHref: "./posts.html",
@@ -25,10 +26,14 @@ const nicknameHelper = document.getElementById("nickname-helper");
 const updateButton = document.getElementById("profile-update-button");
 const withdrawButton = document.getElementById("withdraw-button");
 const toast = document.getElementById("profile-toast");
+const updateButtonLoading = createButtonLoading(updateButton, {
+  label: "회원 정보 저장 중",
+});
 
 
 const confirmModal = createConfirmModal();
 let previewObjectUrl = null;
+let isUpdating = false;
 
 function getProfileImageSrc(profileImage) {
   if (!profileImage) return "";
@@ -112,6 +117,7 @@ profileImageInput.addEventListener("change", () => {
 
 updateButton.addEventListener("click", async (event) => {
   event.preventDefault();
+  if (isUpdating) return;
 
   const nicknameError = validateNickname();
 
@@ -121,6 +127,8 @@ updateButton.addEventListener("click", async (event) => {
   }
 
   try {
+    isUpdating = true;
+    updateButtonLoading.start();
     const formData = createFormData({
       nickname: nicknameInput.value.trim(),
       profileImage: profileImageInput.files[0],
@@ -143,6 +151,9 @@ updateButton.addEventListener("click", async (event) => {
     showToast("수정 완료", { toast });
   } catch (error) {
     handleProfileEditError(error, { nicknameHelper });
+  } finally {
+    isUpdating = false;
+    updateButtonLoading.stop();
   }
 });
 

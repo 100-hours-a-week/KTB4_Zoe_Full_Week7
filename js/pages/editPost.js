@@ -3,6 +3,7 @@ import { apiClient } from "../api/client.js";
 import { createFormData } from "../utils/formData.js";
 import { getPostEditData } from "../utils/postEditStorage.js";
 import { renderHeader } from "../components/Header.js";
+import { createButtonLoading } from "../utils/delayedLoading.js";
 
 const postId = getQueryParam("id");
 
@@ -23,6 +24,10 @@ const imageHelper = document.getElementById("file-url");
 const postDetailLink = document.getElementById("post-detail-link");
 const createForm = document.getElementById("edit-form");
 const confirmButton = document.getElementById("confirm-button");
+const confirmButtonLoading = createButtonLoading(confirmButton, {
+    label: "게시글 수정 중",
+});
+let isSubmitting = false;
 
 
 if (postId) {
@@ -85,6 +90,7 @@ function updateConfirmButtonState() {
 //요청
 createForm.addEventListener("submit", async(event) => {
     event.preventDefault();
+    if (isSubmitting) return;
 
     const formData = createFormData({
             title: titleInput.value.trim(),
@@ -93,11 +99,17 @@ createForm.addEventListener("submit", async(event) => {
         });
 
     try{
+        isSubmitting = true;
+        confirmButtonLoading.start();
         await apiClient(`/posts/${postId}`, "PUT", formData);
 
         navigateTo(ROUTES.postDetail(postId));
     }catch(error){
         console.log(error.data);
+        updateConfirmButtonState();
+    } finally {
+        isSubmitting = false;
+        confirmButtonLoading.stop();
         updateConfirmButtonState();
     }
     
