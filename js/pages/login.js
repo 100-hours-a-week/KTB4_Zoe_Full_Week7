@@ -6,6 +6,7 @@ import { bindInputsToButton } from "../utils/bindInputsToButton.js";
 import { handleLoginError } from "../errors/authErrors.js";
 import { saveCurrentUser } from "../utils/authStorage.js";
 import { renderHeader } from "../components/Header.js";
+import { createButtonLoading } from "../utils/delayedLoading.js";
 
 renderHeader();
 
@@ -17,6 +18,10 @@ const emailHelper = document.getElementById("email-helper");
 const passwordHelper = document.getElementById("password-helper");
 
 const loginButton = document.getElementById("login-button");
+const loginButtonLoading = createButtonLoading(loginButton, {
+    label: "로그인 처리 중",
+});
+let isSubmitting = false;
 
 //유효성검사 필드 객체
 const fields = {
@@ -60,6 +65,7 @@ Object.values(fields).forEach((field) => {
 loginForm.addEventListener("submit", async (event) => {
 
     event.preventDefault();
+    if (isSubmitting) return;
 
     if (!validateLoginForm()) {
         updateLoginButtonState();
@@ -70,6 +76,8 @@ loginForm.addEventListener("submit", async (event) => {
     const password = passwordInput.value;
 
     try{
+        isSubmitting = true;
+        loginButtonLoading.start();
         const response = await apiClient("/auth/login", "POST", {email, password});
         console.log(response.data);
         saveCurrentUser(response.data);
@@ -78,6 +86,10 @@ loginForm.addEventListener("submit", async (event) => {
 
     } catch(error) {
         handleLoginError(error, { passwordHelper });
+    } finally {
+        isSubmitting = false;
+        loginButtonLoading.stop();
+        updateLoginButtonState();
     }
    
 });

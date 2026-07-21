@@ -5,6 +5,7 @@ import { handlePasswordEditError } from "../errors/passwordErrors.js";
 import { bindInputsToButton } from "../utils/bindInputsToButton.js";
 import { validateField } from "../utils/validateField.js";
 import { validatePassword, validatePasswordConfirm } from "../utils/validators.js";
+import { createButtonLoading } from "../utils/delayedLoading.js";
 
 renderHeader({
   backHref: "./posts.html",
@@ -19,6 +20,10 @@ const passwordHelper = document.getElementById("password-helper");
 const passwordConfirmHelper = document.getElementById("password-confirm-helper");
 const passwordEditButton = document.getElementById("password-edit-button");
 const passwordToast = document.getElementById("password-toast");
+const passwordEditButtonLoading = createButtonLoading(passwordEditButton, {
+  label: "비밀번호 수정 중",
+});
+let isSubmitting = false;
 
 const fields = {
   password: {
@@ -56,6 +61,7 @@ Object.values(fields).forEach((field) => {
 
 passwordEditForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (isSubmitting) return;
 
   if (!validatePasswordEditForm()) {
     updatePasswordEditButtonState();
@@ -63,6 +69,8 @@ passwordEditForm.addEventListener("submit", async (event) => {
   }
 
   try {
+    isSubmitting = true;
+    passwordEditButtonLoading.start();
     await apiClient("/auth/password", "PUT", {
       password: passwordInput.value.trim(),
     });
@@ -75,6 +83,10 @@ passwordEditForm.addEventListener("submit", async (event) => {
       passwordHelper,
       passwordConfirmHelper,
     });
+    updatePasswordEditButtonState();
+  } finally {
+    isSubmitting = false;
+    passwordEditButtonLoading.stop();
     updatePasswordEditButtonState();
   }
 });

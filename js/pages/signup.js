@@ -6,6 +6,7 @@ import { validateField } from "../utils/validateField.js";
 import { bindInputsToButton } from "../utils/bindInputsToButton.js";
 import { handleSignupError } from "../errors/authErrors.js";
 import { renderHeader } from "../components/Header.js";
+import { createButtonLoading } from "../utils/delayedLoading.js";
 
 renderHeader({
   backHref: "../index.html",
@@ -29,6 +30,10 @@ const profileHelper = document.getElementById("profile-helper");
 
 const signupButton = document.getElementById("signup-button");
 const signupForm = document.getElementById("signup-form");
+const signupButtonLoading = createButtonLoading(signupButton, {
+  label: "회원가입 처리 중",
+});
+let isSubmitting = false;
 
 //유효성검사 필드 객체
 const fields = {
@@ -116,6 +121,7 @@ profileImageInput.addEventListener("change", () => {
 
 signupForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (isSubmitting) return;
 
     if (!validateSignupForm()) {
         updateSignupButtonState();
@@ -130,6 +136,8 @@ signupForm.addEventListener("submit", async (event) => {
     });
 
     try {
+        isSubmitting = true;
+        signupButtonLoading.start();
         await apiClient("/auth/signup", "POST", formData);
         navigateTo(ROUTES.login);
     } catch (error) {
@@ -138,6 +146,10 @@ signupForm.addEventListener("submit", async (event) => {
             nicknameHelper,
             passwordHelper,
         });
+        updateSignupButtonState();
+    } finally {
+        isSubmitting = false;
+        signupButtonLoading.stop();
         updateSignupButtonState();
     }
 });
