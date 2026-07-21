@@ -1,59 +1,12 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Votle - 로그인</title>
-    <link rel="stylesheet" href="./css/reset.css" />
-    <link rel="stylesheet" href="./css/tokens.css" />
-    <link rel="stylesheet" href="./css/layout.css" />
-    <link rel="stylesheet" href="./css/components.css" />
-    <link rel="stylesheet" href="./css/pages/auth.css" />
-    <script type="module" src="./js/pages/login.js"></script>
+    <title>Votle</title>
   </head>
-  <body data-auth="guest">
-    <div class="app-shell">
-      <div id="header-root"></div>
-
-      <main class="main main--auth">
-        <section class="section auth" aria-labelledby="login-title">
-          <div class="auth__brand">
-            <div class="auth__wordmark">
-              <span class="auth__wordmark-mark"></span>Votle
-            </div>
-            <div class="auth__tagline">의견이 모이면 답이 보여요</div>
-          </div>
-
-          <h2 class="sr-only" id="login-title">로그인</h2>
-
-          <div class="auth__card">
-            <form id="login-form" class="form login-form">
-              <div class="form__group">
-                <label class="form__label" for="email">이메일</label>
-                <input class="form__control" id="email" name="email" type="email" placeholder="이메일을 입력하세요" />
-                <p id="email-helper" class="form__helper">* 이메일을 입력해주세요.</p>
-              </div>
-
-              <div class="form__group">
-                <label class="form__label" for="password">비밀번호</label>
-                <input class="form__control" id="password" name="password" type="password" placeholder="비밀번호를 입력하세요" />
-                <p id="password-helper" class="form__helper">* 비밀번호를 입력해주세요</p>
-              </div>
-
-              <!-- <div class="auth__row">
-                <span>자동 로그인</span>
-                <a href="#">비밀번호 찾기</a>
-              </div> -->
-
-              <button id="login-button" class="button button--block" type="submit" disabled>로그인</button>
-            </form>
-          </div>
-
-          <p class="auth__footer">
-            아직 회원이 아니신가요? <a href="./pages/signup.html">회원가입</a>
-          </p>
-        </section>
-      </main>
-    </div>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
