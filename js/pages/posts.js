@@ -1,9 +1,11 @@
 import { apiClient } from "../api/client.js";
 import { PostCard } from "../components/PostCard.js";
+import { PostListSkeleton, PostCardSkeleton } from "../components/Skeletons.js";
 import { createInfiniteScroll } from "../utils/infiniteScroll.js";
 import { renderHeader } from "../components/Header.js";
 import { getCurrentUserId } from "../utils/authStorage.js";
 import { h, render } from "../lib/vdom.js";
+import { createDelayedLoading } from "../utils/delayedLoading.js";
 
 document.body.dataset.auth = getCurrentUserId() === null ? "guest" : "user";
 
@@ -24,6 +26,28 @@ let isPostObserverStarted = false;
 
 let renderedPosts = [];
 let currentSort = "latest";
+
+const listSkeleton = createDelayedLoading({
+    onShow: () => {
+        postList.setAttribute("aria-busy", "true");
+        postList.innerHTML = PostListSkeleton();
+    },
+    onHide: () => {
+        postList.removeAttribute("aria-busy");
+    },
+});
+
+const nextPageSkeleton = createDelayedLoading({
+    onShow: () => {
+        postList.insertAdjacentHTML(
+            "beforeend",
+            `<div class="post-list__next-skeleton" role="status" aria-label="게시글을 더 불러오는 중" aria-busy="true">${PostCardSkeleton()}</div>`
+        );
+    },
+    onHide: () => {
+        postList.querySelector(".post-list__next-skeleton")?.remove();
+    },
+});
 
 const infiniteScroll = createInfiniteScroll({
     anchor: postList,
@@ -63,17 +87,21 @@ async function loadPosts({ append = false } = {}) {
     if (isPostLoading || !hasNextPost) return;
 
     isPostLoading = true;
+    const loadingController = append ? nextPageSkeleton : listSkeleton;
+    loadingController.start();
 
     try{
         const response = await apiClient(getPostsPath());
         const data = response.data;
         const posts = data.posts ?? data;
 
+        loadingController.stop();
         renderPosts(posts, { append });
 
         nextCursor = data.next_cursor ?? null;
         hasNextPost = Boolean(data.has_next);
     }catch(error){
+        loadingController.stop();
         console.error(error);
     }finally{
         isPostLoading = false;
