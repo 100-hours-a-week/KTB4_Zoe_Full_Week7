@@ -16,12 +16,16 @@ export async function apiClient(path, method = "GET", body = null) {
     body: requestBody.body,
   });
 
-  const data = await response.json();
+  const contentType = response.headers.get("content-type") ?? "";
+  const text = response.status === 204 ? "" : await response.text();
+  const data = text && contentType.includes("application/json")
+    ? JSON.parse(text)
+    : null;
 
   if (!response.ok) {
-    const error = new Error(data.message);
+    const error = new Error(data?.message ?? response.statusText);
     error.status = response.status;
-    error.data = data.data;
+    error.data = data?.data;
     throw error;
   }
 
