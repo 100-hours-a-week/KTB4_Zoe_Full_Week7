@@ -131,7 +131,7 @@ export function ProfileEditPage() {
         <Modal
           open={withdrawOpen}
           title="회원탈퇴 하시겠습니까?"
-          description="작성된 게시글과 댓글은 삭제됩니다."
+          description="작성한 게시글과 댓글은 삭제되지 않고 작성자가 알 수 없음으로 표시됩니다."
           confirmText="탈퇴하기"
           danger
           isLoading={withdrawAction.showLoading}

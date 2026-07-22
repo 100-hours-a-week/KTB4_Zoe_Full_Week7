@@ -11,6 +11,16 @@ import { useDebouncedValidation } from "@/hooks/useDebouncedValidation";
 import type { ApiError } from "@/types/domain";
 import { validateEmail, validatePassword } from "@/utils/validators";
 
+function getLoginErrorMessage(error: ApiError) {
+  if (error.code === "user_deleted" || error.message === "user_deleted") {
+    return "탈퇴한 계정입니다.";
+  }
+  if (error.status === 401 || error.code === "authentication_failed") {
+    return "아이디 또는 비밀번호를 확인해주세요";
+  }
+  return error.message;
+}
+
 export function LoginPage() {
   const navigate = useNavigate();
   const { setUserFromResponse } = useAuth();
@@ -39,11 +49,7 @@ export function LoginPage() {
         navigate("/posts");
       } catch (error) {
         const apiError = error as ApiError;
-        passwordValidation.setMessage(
-          apiError.status === 401 || apiError.code === "authentication_failed"
-            ? "아이디 또는 비밀번호를 확인해주세요"
-            : apiError.message,
-        );
+        passwordValidation.setMessage(getLoginErrorMessage(apiError));
       }
     });
   }
