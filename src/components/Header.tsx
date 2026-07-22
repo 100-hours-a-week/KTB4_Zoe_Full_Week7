@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "@/api/auth";
 import { Avatar } from "@/components/Avatar";
-import { Icon } from "@/components/Icon";
 import { Logo } from "@/components/Logo";
 import { useAsyncAction } from "@/hooks/useAsyncAction";
 import { useAuth } from "@/contexts/AuthContext";
@@ -36,10 +35,11 @@ export function Header({ backTo }: HeaderProps) {
         </div>
 
         <div className="header-actions">
-          <div className="search-pill" aria-hidden="true">
+          {/* v2: search */}
+          {/* <div className="search-pill" aria-hidden="true">
             <Icon name="search" />
             <span>검색</span>
-          </div>
+          </div> */}
 
           {authStatus === "authenticated" && user ? (
             <div className="profile-menu">

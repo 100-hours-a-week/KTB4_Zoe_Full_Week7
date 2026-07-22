@@ -254,7 +254,8 @@ export function PostDetailPage() {
                 <img className="detail-image" src={getAssetUrl(imageUrl)} alt="" key={imageUrl} />
               ))}
 
-              <section className="vote-result" aria-label="투표 결과">
+              {/* v2: vote result */}
+              {/* <section className="vote-result" aria-label="투표 결과">
                 <div className="vote-result-head">
                   <strong>최종 결과</strong>
                   <span>마감됨</span>
@@ -278,7 +279,7 @@ export function PostDetailPage() {
                   </div>
                 ))}
                 <p>총 340명 참여 · 2026년 7월 11일 마감</p>
-              </section>
+              </section> */}
 
               <div className="like-row">
                 <Button
@@ -358,7 +359,7 @@ export function PostDetailPage() {
       <Modal
         open={Boolean(deleteTarget)}
         title={deleteTarget === "post" ? "이 글을 삭제할까요?" : "댓글을 삭제할까요?"}
-        description={deleteTarget === "post" ? "삭제한 글과 투표 결과는 되돌릴 수 없어요." : "삭제한 댓글은 되돌릴 수 없어요."}
+        description={deleteTarget === "post" ? "삭제한 글은 되돌릴 수 없어요." : "삭제한 댓글은 되돌릴 수 없어요."}
         confirmText="삭제하기"
         danger
         isLoading={deleteAction.showLoading}

@@ -76,10 +76,11 @@ export function PostsPage() {
     <Layout>
       <section className="feed-section">
         <div className="feed-toolbar">
-          <div className="segmented">
+          {/* v2: popular sort */}
+          {/* <div className="segmented">
             <button className="active" type="button">최신순</button>
             <button type="button">인기순</button>
-          </div>
+          </div> */}
           <Button type="button" onClick={handleCreateClick}>
             <Icon name="write" />
             글쓰기

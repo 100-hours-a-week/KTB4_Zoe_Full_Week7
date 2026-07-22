@@ -24,7 +24,8 @@ export function PostCard({ post }: { post: Post }) {
           <strong>{writer.nickname ?? "사용자"}</strong>
           <span>{createdAt}</span>
         </div>
-        <span className="status-badge status-badge--active">투표중</span>
+        {/* v2: vote status */}
+        {/* <span className="status-badge status-badge--active">투표중</span> */}
       </div>
       <h2>{post.title}</h2>
       <p>{post.content ?? ""}</p>
@@ -32,7 +33,8 @@ export function PostCard({ post }: { post: Post }) {
         <span><Icon name="heart" size="sm" /> {countFormat(likeCount)}</span>
         <span><Icon name="comment" size="sm" /> {countFormat(commentCount)}</span>
         <span><Icon name="eye" size="sm" /> {countFormat(viewCount)}</span>
-        <strong><Icon name="participationActive" size="sm" /> {countFormat(Math.max(likeCount + commentCount, 0))}명 참여</strong>
+        {/* v2: vote participation count */}
+        {/* <strong><Icon name="participationActive" size="sm" /> {countFormat(Math.max(likeCount + commentCount, 0))}명 참여</strong> */}
       </div>
     </Link>
   );
