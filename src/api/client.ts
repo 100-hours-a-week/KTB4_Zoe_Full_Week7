@@ -87,7 +87,7 @@ async function parseResponse(response: Response) {
 
 async function refreshToken() {
   if (!refreshPromise) {
-    refreshPromise = request(`${API_BASE_URL}/auth/refresh`, {
+    refreshPromise = request(`${API_BASE_URL}/auth/reissue`, {
       method: "POST",
       credentials: "include",
       headers: await getCsrfHeaders("POST"),
