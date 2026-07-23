@@ -10,6 +10,8 @@ import { bindInputsToButton } from "../utils/bindInputsToButton.js";
 import { getCurrentUserId, isOwner } from "../utils/authStorage.js";
 import { savePostEditData } from "../utils/postEditStorage.js";
 import { renderHeader } from "../components/Header.js";
+import { LikeButton } from "../components/LikeButton.js";
+import { render } from "../lib/vdom.js";
 
 const postId = getQueryParam("id");
 const currentUserId = getCurrentUserId();
@@ -37,7 +39,6 @@ const postEditLink = document.getElementById("post-edit-link");
 const postDeleteButton = document.getElementById("post-delete-button");
 
 const likeCount = document.getElementById("like-count");
-const likeButton = document.getElementById("like-button");
 const viewCount = document.getElementById("view-count");
 const commentCount = document.getElementById("comment-count");
 
@@ -55,6 +56,7 @@ commentList.after(commentSentinel);
 //좋아요 여부
 let isLiked = false;
 let currentLikeCount = 0;
+
 let editingCommentId = null;
 const COMMENT_PAGE_SIZE = 20;
 let currentCommentPage = 0;
@@ -62,9 +64,11 @@ let hasNextComment = true;
 let isCommentLoading = false;
 let isCommentObserverStarted = false;
 
+const likeButton = document.getElementById("like-button-root");
+render(LikeButton(isLiked, currentLikeCount, handleLike ),likeButton);
+
 function updateLikeButtonState() {
-    likeButton.dataset.liked = String(isLiked);
-    likeCount.textContent = countFormat(currentLikeCount);
+    render(LikeButton(isLiked, currentLikeCount, handleLike ),likeButton);
 }
 
 function renderPostImage(imageUrls = []) {
@@ -272,22 +276,24 @@ commentList.addEventListener("click", (event) => {
 });
 
 //좋아요 버튼 이벤트
-likeButton.addEventListener("click", async(e) => {
-    e.preventDefault();
+function handleLike(){
+    async(e) => {
+        e.preventDefault();
 
-    const nextLiked = !isLiked;
-    const method = nextLiked ? "POST" : "DELETE";
+        const nextLiked = !isLiked;
+        const method = nextLiked ? "POST" : "DELETE";
 
-    try{
-        const response = await apiClient(`/likes/posts/${postId}`, method);
+        try{
+            const response = await apiClient(`/likes/posts/${postId}`, method);
 
-        isLiked = response.data.is_liked;
-        currentLikeCount = response.data.like_count;
-        updateLikeButtonState();
-    }catch(e){
-        console.error(e);
+            isLiked = response.data.is_liked;
+            currentLikeCount = response.data.like_count;
+            updateLikeButtonState();
+        }catch(e){
+            console.error(e);
+        }
     }
-})
+}
 
 const commentObserver = new IntersectionObserver((entries) => {
     if (!entries[0].isIntersecting) return;
