@@ -67,9 +67,8 @@ let isCommentObserverStarted = false;
 const likeButton = document.getElementById("like-button-root");
 render(LikeButton(isLiked, currentLikeCount, handleLike ),likeButton);
 
-function updateLikeButtonState() {
-    render(LikeButton(isLiked, currentLikeCount, handleLike ),likeButton);
-}
+
+
 
 function renderPostImage(imageUrls = []) {
     const firstImageUrl = imageUrls[0];
@@ -275,23 +274,33 @@ commentList.addEventListener("click", (event) => {
     });
 });
 
-//좋아요 버튼 이벤트
-function handleLike(){
-    async(e) => {
-        e.preventDefault();
+function updateLikeButtonState() {
+    const oldState = {isLiked: !isLiked, currentLikeCount: isLiked? currentLikeCount-1 : currentLikeCount+1};
+    console.log("old:",oldState);
+    const oldNode = LikeButton(oldState);
+    const newState = {isLiked:isLiked, currentLikeCount: currentLikeCount};
+    const newNode = LikeButton(newState);
+    console.log("new:",newState);
+    render(LikeButton(isLiked, currentLikeCount, handleLike ),likeButton);
+}
 
-        const nextLiked = !isLiked;
         const method = nextLiked ? "POST" : "DELETE";
+//좋아요 버튼 이벤트
+async function handleLike(e) {
+    e.preventDefault();
+    console.log("클릭");
+    const nextLiked = !isLiked;
+    const method = nextLiked ? "POST" : "DELETE";
 
-        try{
             const response = await apiClient(`/likes/posts/${postId}`, method);
+    try{
+        const response = await apiClient(`/likes/posts/${postId}`, method);
 
-            isLiked = response.data.is_liked;
-            currentLikeCount = response.data.like_count;
-            updateLikeButtonState();
-        }catch(e){
-            console.error(e);
-        }
+        isLiked = response.data.is_liked;
+        currentLikeCount = response.data.like_count;
+        updateLikeButtonState();
+    }catch(e){
+        console.error(e);
     }
 }
 
