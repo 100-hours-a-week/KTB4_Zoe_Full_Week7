@@ -18,6 +18,10 @@ function createElement(vNode) {
     const element = document.createElement(vNode.type);
 
     Object.entries(vNode.props ?? {}).forEach(([name, value]) => {
+        if(name.startsWith('on') && typeof value === "function"){
+            element[name.toLowerCase()] = value;
+            return;
+        }
         element.setAttribute(name, value);
     });
 
