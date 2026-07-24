@@ -7,7 +7,8 @@ export function LikeButton(isLiked, likeCount, onClick) {
             id: "like-button",
             class: "counter like-button",
             type: "button",
-            "data-liked": isLiked
+            "data-liked": isLiked,
+            onClick
         },
         h("span",{class: "counter__label"},"좋아요"),
         h("span",{id: "like-count"},likeCount),
