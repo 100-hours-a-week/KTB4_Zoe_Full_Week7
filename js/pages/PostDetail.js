@@ -284,7 +284,6 @@ function updateLikeButtonState() {
     render(LikeButton(isLiked, currentLikeCount, handleLike ),likeButton);
 }
 
-        const method = nextLiked ? "POST" : "DELETE";
 //좋아요 버튼 이벤트
 async function handleLike(e) {
     e.preventDefault();
@@ -292,7 +291,6 @@ async function handleLike(e) {
     const nextLiked = !isLiked;
     const method = nextLiked ? "POST" : "DELETE";
 
-            const response = await apiClient(`/likes/posts/${postId}`, method);
     try{
         const response = await apiClient(`/likes/posts/${postId}`, method);
 
