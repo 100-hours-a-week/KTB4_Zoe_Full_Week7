@@ -46,7 +46,7 @@ export function updateElement (parent, newNode, oldNode, index=0) {
         return parent.appendChild(createElement(newNode));
     }
 
-    if (typeof newNode === "string" && typeof oldNode === "string") {
+    if ((typeof newNode === "string" && typeof oldNode === "string")||(typeof newNode === "number" && typeof oldNode === "number")) {
         if (newNode === oldNode) return;
         return parent.replaceChild(
             createElement(newNode),
