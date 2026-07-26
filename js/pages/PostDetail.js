@@ -11,7 +11,7 @@ import { getCurrentUserId, isOwner } from "../utils/authStorage.js";
 import { savePostEditData } from "../utils/postEditStorage.js";
 import { renderHeader } from "../components/Header.js";
 import { LikeButton } from "../components/LikeButton.js";
-import { render } from "../lib/vdom.js";
+import { updateElement } from "../lib/vdom.js";
 
 const postId = getQueryParam("id");
 const currentUserId = getCurrentUserId();
@@ -38,7 +38,6 @@ const postActions = document.getElementById("post-actions");
 const postEditLink = document.getElementById("post-edit-link");
 const postDeleteButton = document.getElementById("post-delete-button");
 
-const likeCount = document.getElementById("like-count");
 const viewCount = document.getElementById("view-count");
 const commentCount = document.getElementById("comment-count");
 
@@ -65,7 +64,8 @@ let isCommentLoading = false;
 let isCommentObserverStarted = false;
 
 const likeButton = document.getElementById("like-button-root");
-render(LikeButton(isLiked, currentLikeCount, handleLike ),likeButton);
+let currentLikeNode = LikeButton(isLiked, currentLikeCount, handleLike )
+updateElement(likeButton, currentLikeNode);
 
 
 
@@ -115,7 +115,6 @@ function fetchPost(post) {
     currentLikeCount = post.like_count;
     isLiked = Boolean(post.is_liked ?? post.liked ?? false);
     updateLikeButtonState();
-    viewCount.textContent = countFormat(post.view_count);
     commentCount.textContent = countFormat(post.comment_count);
 }
 
@@ -275,13 +274,13 @@ commentList.addEventListener("click", (event) => {
 });
 
 function updateLikeButtonState() {
-    const oldState = {isLiked: !isLiked, currentLikeCount: isLiked? currentLikeCount-1 : currentLikeCount+1};
     console.log("old:",oldState);
-    const oldNode = LikeButton(oldState);
+    const oldNode = currentLikeNode;
     const newState = {isLiked:isLiked, currentLikeCount: currentLikeCount};
-    const newNode = LikeButton(newState);
     console.log("new:",newState);
-    render(LikeButton(isLiked, currentLikeCount, handleLike ),likeButton);
+    const newNode = LikeButton(newState.isLiked, newState.currentLikeCount, handleLike);
+    updateElement(likeButton, newNode, oldNode);
+    currentLikeNode = newNode;
 }
 
 //좋아요 버튼 이벤트
