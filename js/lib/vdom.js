@@ -38,11 +38,11 @@ export function render(vNode, container) {
 
 export function updateElement (parent, newNode, oldNode, index=0) {
 
-    if (!newNode && oldNode) {
+    if (newNode == null && oldNode != null) {
         return parent.removeChild(parent.childNodes[index]);
     }
 
-    if (newNode && !oldNode) {
+    if (newNode != null && oldNode == null) {
         return parent.appendChild(createElement(newNode));
     }
 
