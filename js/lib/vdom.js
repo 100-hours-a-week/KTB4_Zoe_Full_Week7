@@ -76,7 +76,8 @@ export function updateElement (parent, newNode, oldNode, index=0) {
         updateElement(
             parent.childNodes[index],
             newNode.children[i],
-            oldNode.children[i]
+            oldNode.children[i],
+            i
         );
     }
 
