@@ -18,6 +18,21 @@ export async function apiClient(path, method = "GET", body = null) {
 
   const data = await response.json();
 
+  if (response.status === 401){
+    try{
+      await fetch(`${BASE_URL}/auth/reissue`,{
+        method: "POST",
+        credentials: "include",
+        headers: {
+      ...requestBody.headers,
+      ...csrfHeaders,
+    },
+      });
+    }catch(e){
+      console.error(e);
+    }
+  }
+
   if (!response.ok) {
     const error = new Error(data.message);
     error.status = response.status;
