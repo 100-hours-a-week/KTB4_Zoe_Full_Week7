@@ -87,7 +87,6 @@ export function updateElement (parent, newNode, oldNode, index=0) {
 
 function updateAttributes(target, newProps, oldProps) {
     for (let [attribute, value] of Object.entries(newProps)) {
-        console.log(attribute);
         if (oldProps[attribute] === newProps[attribute]) continue;
         target.setAttribute(attribute,value);
     }

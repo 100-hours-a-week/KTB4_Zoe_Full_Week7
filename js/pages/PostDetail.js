@@ -274,10 +274,8 @@ commentList.addEventListener("click", (event) => {
 });
 
 function updateLikeButtonState() {
-    console.log("old:",oldState);
     const oldNode = currentLikeNode;
     const newState = {isLiked:isLiked, currentLikeCount: currentLikeCount};
-    console.log("new:",newState);
     const newNode = LikeButton(newState.isLiked, newState.currentLikeCount, handleLike);
     updateElement(likeButton, newNode, oldNode);
     currentLikeNode = newNode;
@@ -286,7 +284,6 @@ function updateLikeButtonState() {
 //좋아요 버튼 이벤트
 async function handleLike(e) {
     e.preventDefault();
-    console.log("클릭");
     const nextLiked = !isLiked;
     const method = nextLiked ? "POST" : "DELETE";
 
