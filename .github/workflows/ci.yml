@@ -104,3 +104,46 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      - name: Dispatch frontend deployment
+        env:
+          DEPLOY_DISPATCH_TOKEN: ${{ secrets.DEPLOY_DISPATCH_TOKEN }}
+          IMAGE_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          if [[ -z "${DEPLOY_DISPATCH_TOKEN}" ]]; then
+            echo "::error::DEPLOY_DISPATCH_TOKEN is empty"
+            exit 1
+          fi
+
+          if [[ ! "${IMAGE_SHA}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::IMAGE_SHA must be a 40-character lowercase hexadecimal SHA"
+            exit 1
+          fi
+
+          payload="$(
+            jq -n \
+              --arg image_sha "${IMAGE_SHA}" \
+              '{
+                event_type: "frontend_image_published",
+                client_payload: {
+                  component: "frontend",
+                  image_sha: $image_sha,
+                  source_repository: "100-hours-a-week/KTB4_Zoe_Full_Week7"
+                }
+              }'
+          )"
+
+          curl \
+            --fail-with-body \
+            --silent \
+            --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${DEPLOY_DISPATCH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2026-03-10" \
+            --header "Content-Type: application/json" \
+            --data "${payload}" \
+            "https://api.github.com/repos/100-hours-a-week/KTB4_Zoe_Full_Deploy/dispatches"
