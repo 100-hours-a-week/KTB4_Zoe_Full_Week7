@@ -1,7 +1,7 @@
 import { apiClient } from "../api/client.js";
 import { ROUTES, navigateTo } from "../router.js";
 import { createFormData } from "../utils/formData.js";
-import { validateEmail, validateNickname, validatePassword, validatePasswordConfirm, validateProfileImage } from "../utils/validators.js";
+import { validateEmail, validateNickname, validatePassword, validatePasswordConfirm } from "../utils/validators.js";
 import { validateField } from "../utils/validateField.js";
 import { bindInputsToButton } from "../utils/bindInputsToButton.js";
 import { handleSignupError } from "../errors/authErrors.js";
@@ -52,12 +52,7 @@ const fields = {
     input: nicknameInput,
     helper: nicknameHelper,
     validator: () => validateNickname(nicknameInput.value),
-  },
-  profileImage: {
-    input: profileImageInput,
-    helper: profileHelper,
-    validator: () => validateProfileImage(profileImageInput.files[0]),
-  },
+  }
 };
 
 //모든 필드에 대해 유효성 검사하는 함수
@@ -100,7 +95,6 @@ profileImageInput.addEventListener("change", () => {
   if (!file) {
     preview.hidden = true;
     profilePlaceholder.hidden = false;
-    validateField(fields.profileImage);
     updateSignupButtonState();
     return;
   }
@@ -110,7 +104,6 @@ profileImageInput.addEventListener("change", () => {
   profileHelper.hidden = true;
   profilePlaceholder.hidden = true;
 
-  validateField(fields.profileImage);
   updateSignupButtonState();
 });
 

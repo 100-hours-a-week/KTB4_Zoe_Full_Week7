@@ -38,8 +38,3 @@ export function validateNickname(nickname) {
   if (nickname.length > 10) return "닉네임은 최대 10자 까지 작성 가능합니다.";
   return "";
 }
-
-export function validateProfileImage(file) {
-  if (!file) return "프로필 사진을 추가해주세요.";
-  return "";
-}
