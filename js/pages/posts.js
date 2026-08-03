@@ -3,7 +3,7 @@ import { PostCard } from "../components/PostCard.js";
 import { createInfiniteScroll } from "../utils/infiniteScroll.js";
 import { renderHeader } from "../components/Header.js";
 import { getCurrentUserId } from "../utils/authStorage.js";
-import { h, render } from "../lib/vdom.js";
+import { h, updateElement } from "../lib/vdom.js";
 
 document.body.dataset.auth = getCurrentUserId() === null ? "guest" : "user";
 
@@ -109,8 +109,15 @@ function getVisiblePosts() {
 }
 
 function renderPosts(posts, { append = false } = {}) {
+    const oldNode = currentPostList;
     renderedPosts = append ? [...renderedPosts, ...posts] : posts;
-    render(PostList(getVisiblePosts()), postList);
+    const newNode = PostList(
+        getVisiblePosts(),
+        currentQuery.trim(),
+        () => clearSearch()
+    );
+    updateElement(postList, newNode, oldNode);
+    currentPostList = newNode;
 }
 
 function getPostsPath() {
