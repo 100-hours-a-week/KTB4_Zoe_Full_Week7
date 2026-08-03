@@ -112,7 +112,7 @@ function updateAttributes(target, newProps, oldProps) {
         target.setAttribute(attribute,value);
     }
 
-    for (let [attribute,value] of Object.entries(newProps)) {
+    for (let [attribute,value] of Object.entries(oldProps)) {
         if (newProps[attribute] !== undefined) continue;
         target.removeAttribute(attribute);
     }
