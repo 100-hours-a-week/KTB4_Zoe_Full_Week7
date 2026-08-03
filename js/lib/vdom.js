@@ -60,12 +60,13 @@ export function updateElement (parent, newNode, oldNode, index=0) {
         )
     }
 
-    if (typeof newNode !== typeof oldNode) {
+    if (newNode.type !== oldNode.type || typeof newNode !== typeof oldNode) {
         return parent.replaceChild(
             createElement(newNode),
             parent.childNodes[index]
         )
     }
+
 
     updateAttributes(
         parent.childNodes[index],
