@@ -110,11 +110,22 @@ export function updateElement (parent, newNode, oldNode, index=0) {
 function updateAttributes(target, newProps, oldProps) {
     for (let [attribute, value] of Object.entries(newProps)) {
         if (oldProps[attribute] === newProps[attribute]) continue;
+
+        if(attribute.startsWith('on') && typeof value === "function"){
+            target[attribute.toLowerCase()] = value;
+            continue;
+        }
+
         target.setAttribute(attribute,value);
     }
 
     for (let [attribute,value] of Object.entries(oldProps)) {
         if (newProps[attribute] !== undefined) continue;
+
+        if(attribute.startsWith('on')){
+            target[attribute.toLowerCase()] = null;
+            continue;
+        }
         target.removeAttribute(attribute);
     }
 
