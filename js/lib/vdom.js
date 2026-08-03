@@ -43,7 +43,13 @@ export function updateElement (parent, newNode, oldNode, index=0) {
     }
 
     if (newNode != null && oldNode == null) {
-        return parent.appendChild(createElement(newNode));
+        const newElement = createElement(newNode);
+        const referenceNode = parent.childNodes[index] ?? null;
+
+        return parent.insertBefore(
+            newElement,
+            referenceNode
+        );
     }
 
     if ((typeof newNode === "string" && typeof oldNode === "string")||(typeof newNode === "number" && typeof oldNode === "number")) {
@@ -67,16 +73,31 @@ export function updateElement (parent, newNode, oldNode, index=0) {
         oldNode.props || {}
     );
 
-    const maxLength = Math.max(
-        newNode.children.length,
-        oldNode.children.length
-    );
+    const commonLength = Math.min(oldNode.children.length, newNode.children.length);
 
-    for (let i=0; i<maxLength; i++) {
+    for (let i=0; i<commonLength; i++) {
         updateElement(
             parent.childNodes[index],
             newNode.children[i],
             oldNode.children[i],
+            i
+        )
+    }
+
+    for (let i=oldNode.children.length-1; i>=commonLength; i--) {
+        updateElement(
+            parent.childNodes[index],
+            undefined,
+            oldNode.children[i],
+            i
+        );
+    }
+
+    for (let i=commonLength; i<newNode.children.length; i++) {
+        updateElement(
+            parent.childNodes[index],
+            newNode.children[i],
+            undefined,
             i
         );
     }
