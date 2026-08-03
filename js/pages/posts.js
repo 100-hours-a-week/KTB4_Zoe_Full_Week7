@@ -12,9 +12,12 @@ renderHeader({
     showProfileMenu: true,
 });
 
-const postList = document.querySelector(".post-list");
 const sortButtons = document.querySelectorAll("[data-post-sort]");
 
+const postList = document.querySelector(".post-list");
+const postSearch = document.querySelector("#post-search");
+const postSearchClear = document.querySelector("#post-search-clear");
+let currentPostList;
 const POST_PAGE_SIZE = 20;
 
 let nextCursor = null;
@@ -24,24 +27,85 @@ let isPostObserverStarted = false;
 
 let renderedPosts = [];
 let currentSort = "latest";
+let currentQuery = "";
 
 const infiniteScroll = createInfiniteScroll({
     anchor: postList,
     onLoadMore: () => loadPosts({append: true}),
 });
 
-function PostList(posts) {
+function clearSearch() {
+    postSearch.value = "";
+    currentQuery = "";
+    postSearchClear.hidden = true;
+    renderPosts(renderedPosts);
+    postSearch.focus();
+}
+
+function PostList(posts, query, onClearSearch) {
+    if (posts.length === 0) {
+        return h(
+            "div",
+            { class: "post-list__empty" },
+            h(
+                "p",
+                { role: "status" },
+                query
+                    ? `"${query}"에 해당하는 게시글이 없습니다.`
+                    : "아직 등록된 게시글이 없습니다."
+            ),
+            query
+                ? h(
+                    "button",
+                    {
+                        type: "button",
+                        class: "post-list__clear",
+                        onClick: onClearSearch,
+                    },
+                    "검색 초기화"
+                )
+                : null
+        );
+    }
+
     return h(
         "div",
-        { class: "post-list__items" },
+        query
+            ? { class: "post-list__items", "data-query": query }
+            : { class: "post-list__items" },
+        h(
+            "p",
+            { class: "post-list__summary", "aria-live": "polite" },
+            query
+                ? `${posts.length}개의 검색 결과`
+                : `게시글 ${posts.length}개`
+        ),
         ...posts.map((post) => PostCard(post))
     );
 }
 
 function getVisiblePosts() {
-    if (currentSort !== "popular") return renderedPosts;
+    const query = currentQuery.trim().toLocaleLowerCase("ko-KR");
+    const filteredPosts = query
+        ? renderedPosts.filter((post) => {
+            const writer = post.writer ?? {};
+            return [post.title, post.content, writer.nickname]
+                .filter(Boolean)
+                .some((value) =>
+                    String(value).toLocaleLowerCase("ko-KR").includes(query)
+                );
+        })
+        : [...renderedPosts];
 
-    return [...renderedPosts].sort((a, b) => (b.like_count ?? 0) - (a.like_count ?? 0));
+    if (currentSort === "latest") {
+        return filteredPosts.sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+    }
+
+    return filteredPosts.sort(
+        (a, b) => (b.like_count ?? 0) - (a.like_count ?? 0)
+    );
 }
 
 function renderPosts(posts, { append = false } = {}) {
@@ -94,6 +158,14 @@ sortButtons.forEach((button) => {
             item.classList.toggle("pill-tab--active", item === button);
             item.setAttribute("aria-pressed", String(item === button));
         });
-        render(PostList(getVisiblePosts()), postList);
+        renderPosts(renderedPosts);
     });
 });
+
+postSearch.addEventListener("input", () => {
+    currentQuery = postSearch.value;
+    postSearchClear.hidden = currentQuery.length === 0;
+    renderPosts(renderedPosts);
+});
+
+postSearchClear.addEventListener("click", clearSearch);
