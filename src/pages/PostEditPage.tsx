@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getPost, updatePost } from "@/api/posts";
 import { Layout } from "@/components/Layout";
-import { createPostFormData, PostEditorForm, type PostEditorValues } from "@/components/PostEditorForm";
+import {
+  createPostUpdateFormData,
+  PostEditorForm,
+  type PostEditorValues,
+} from "@/components/PostEditorForm";
 import { RequireAuth } from "@/components/RequireAuth";
-import type { Post } from "@/types/domain";
+import type { ApiError, Post } from "@/types/domain";
 import { clearSavedPostForEdit, getSavedPostForEdit } from "@/utils/postEditStorage";
+import { countFormat } from "@/utils/format";
 
 export function PostEditPage() {
   const { postId = "" } = useParams();
@@ -15,6 +20,7 @@ export function PostEditPage() {
     (location.state as { post?: Post } | null)?.post ?? getSavedPostForEdit(postId),
   );
   const [helper, setHelper] = useState("");
+  const [pollLocked, setPollLocked] = useState(false);
 
   useEffect(() => {
     if (post) return;
@@ -24,11 +30,29 @@ export function PostEditPage() {
   }, [post, postId]);
 
   async function handleSubmit(values: PostEditorValues) {
+    setHelper("");
+    setPollLocked(false);
     try {
-      await updatePost(postId, createPostFormData(values));
+      const originalPollOptions = post?.poll?.options ?? [];
+      const pollChanged = values.pollOptions?.length !== originalPollOptions.length || values.pollOptions?.some(
+        (option, index) => {
+          const originalOption = originalPollOptions[index];
+          return (
+            !originalOption ||
+            option.optionId !== originalOption.option_id ||
+            option.content.trim() !== originalOption.content.trim()
+          );
+        },
+      );
+      await updatePost(postId, createPostUpdateFormData(values, Boolean(pollChanged)));
       clearSavedPostForEdit(postId);
       navigate(`/posts/${postId}`);
     } catch (error) {
+      const apiError = error as ApiError;
+      if (apiError.code === "poll_options_locked" || apiError.status === 409) {
+        setPollLocked(true);
+        return;
+      }
       setHelper(error instanceof Error ? error.message : "게시글 수정에 실패했습니다.");
     }
   }
@@ -39,14 +63,22 @@ export function PostEditPage() {
         <PostEditorForm
           title="글 수정"
           submitText="수정 완료"
+          enablePoll={Boolean(post?.poll)}
           initialValues={{
             title: post?.title ?? "",
             content: post?.content ?? "",
             imageName:
               (post?.image_urls ?? post?.imageUrls)?.map((url) => url.split("/").pop()).join(", ") ||
               "파일을 선택해주세요.",
+            pollOptions: post?.poll?.options.map((option) => ({
+              optionId: option.option_id,
+              content: option.content,
+            })),
           }}
           helper={helper}
+          toastMessage={pollLocked
+            ? `이미 ${countFormat(post?.poll?.total_vote_count ?? 0)}명이 투표에 참여했어요. 투표 항목 수정은 제한됩니다.`
+            : null}
           onSubmit={handleSubmit}
         />
       </Layout>

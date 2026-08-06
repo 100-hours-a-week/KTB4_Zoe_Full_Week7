@@ -1,4 +1,5 @@
 import cameraIcon from "@/assets/signup-camera.svg";
+import alertIcon from "@/assets/icons/alert.svg";
 import successCheckIcon from "@/assets/helper-success-check.svg";
 import checkIcon from "@/assets/icons/check.svg";
 import commentIcon from "@/assets/icons/comment.svg";
@@ -16,6 +17,7 @@ import trashIcon from "@/assets/icons/trash.svg";
 import writeIcon from "@/assets/icons/write.svg";
 
 const ICONS = {
+  alert: alertIcon,
   camera: cameraIcon,
   check: checkIcon,
   comment: commentIcon,

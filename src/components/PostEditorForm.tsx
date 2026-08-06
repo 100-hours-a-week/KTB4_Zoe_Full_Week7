@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/Button";
+import { Toast } from "@/components/Toast";
 import { useAsyncAction } from "@/hooks/useAsyncAction";
 
 export type PostEditorPollOption = {
@@ -21,6 +22,7 @@ type PostEditorFormProps = {
   description?: string;
   enablePoll?: boolean;
   helper?: string;
+  toastMessage?: string | null;
   onSubmit: (values: PostEditorValues) => Promise<void>;
   onDraftSave?: (values: PostEditorValues) => Promise<void>;
 };
@@ -65,6 +67,7 @@ export function PostEditorForm({
   description = "궁금한 걸 자유롭게 물어보세요",
   enablePoll = false,
   helper,
+  toastMessage,
   onSubmit,
   onDraftSave,
 }: PostEditorFormProps) {
@@ -151,6 +154,14 @@ export function PostEditorForm({
           submitAction.run(() => onSubmit(values));
         }}
       >
+        {toastMessage ? (
+          <Toast
+            message={toastMessage}
+            variant="error"
+            icon="alert"
+            className="editor-toast"
+          />
+        ) : null}
         <div className="editor-card">
           <input
             className="editor-title-input"
