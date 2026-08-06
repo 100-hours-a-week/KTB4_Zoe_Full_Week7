@@ -28,6 +28,7 @@ type VoteCardProps = {
   results?: VoteCardResult[];
   submitLoading?: boolean;
   participationCount?: number;
+  viewCount?: number;
 };
 
 export function VoteCard({
@@ -43,6 +44,7 @@ export function VoteCard({
   results = [],
   submitLoading = false,
   participationCount,
+  viewCount,
 }: VoteCardProps) {
   const shouldShowSubmit = showSubmit ?? variant === "detail";
   const shouldShowResults = results.length > 0;
@@ -143,6 +145,12 @@ export function VoteCard({
         <div className="vote-participation">
           <Icon name="participationClosed" size="sm" />
           {countFormat(participationCount)}명 참여
+          {viewCount != null ? (
+            <span className="vote-view-count">
+              <Icon name="eye" size="sm" />
+              {countFormat(viewCount)}명 조회
+            </span>
+          ) : null}
         </div>
       ) : null}
     </section>

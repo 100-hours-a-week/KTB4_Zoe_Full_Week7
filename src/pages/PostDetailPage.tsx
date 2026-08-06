@@ -122,6 +122,7 @@ export function PostDetailPage() {
   const writer = post?.writer ?? {};
   const isOwner = Boolean(user?.userId && post && getWriterId(post) === user.userId);
   const likeCount = post?.like_count ?? post?.likeCount ?? 0;
+  const viewCount = post?.view_count ?? post?.viewCount ?? 0;
   const isLiked = Boolean(post?.is_liked ?? post?.liked);
   const poll = post?.poll;
   const canShowResults = authStatus === "authenticated" && Boolean(poll?.has_voted && poll.result?.options.length);
@@ -298,6 +299,7 @@ export function PostDetailPage() {
                   submitDisabled={selectedOptionId == null || voteAction.isRunning}
                   submitLoading={voteAction.isRunning}
                   participationCount={poll.total_vote_count}
+                  viewCount={viewCount}
                   showSubmit={!canShowResults}
                   results={canShowResults
                     ? poll.result?.options.map((result) => ({

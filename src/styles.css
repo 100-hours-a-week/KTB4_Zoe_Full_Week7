@@ -668,6 +668,14 @@
     @apply mt-3 flex items-center gap-1.5 px-2.5 text-xs font-bold text-muted-soft;
   }
 
+  .vote-view-count {
+    @apply ml-1 inline-flex items-center gap-[5px];
+  }
+
+  .vote-view-count .icon {
+    @apply h-[15px] w-[15px];
+  }
+
   .vote-result-option {
     @apply relative block h-[50px] w-full cursor-pointer overflow-hidden rounded-xl bg-soft text-left text-sm;
   }
