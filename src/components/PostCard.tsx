@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { votePost } from "@/api/posts";
 import { Avatar } from "@/components/Avatar";
 import { Icon } from "@/components/Icon";
 import { LoginPromptModal } from "@/components/LoginPromptModal";
 import { VoteCard } from "@/components/VoteCard";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAsyncAction } from "@/hooks/useAsyncAction";
+import { usePollVote } from "@/hooks/usePollVote";
 import type { Post } from "@/types/domain";
 import { countFormat, getPostId } from "@/utils/format";
 
@@ -16,48 +15,25 @@ function getWriter(post: Post) {
 
 export function PostCard({ post }: { post: Post }) {
   const { authStatus } = useAuth();
-  const [pollState, setPollState] = useState(post.poll);
-  const [selectedOptionId, setSelectedOptionId] = useState<number | null>(post.poll?.selected_option_id ?? null);
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
-  const voteAction = useAsyncAction();
   const writer = getWriter(post);
   const postId = getPostId(post);
   const createdAt = post.created_at ?? post.createdAt ?? "";
   const likeCount = post.like_count ?? post.likeCount ?? 0;
   const commentCount = post.comment_count ?? post.commentCount ?? 0;
   const viewCount = post.view_count ?? post.viewCount ?? 0;
-  const poll = pollState;
-  const canShowResults = authStatus === "authenticated" && Boolean(poll?.has_voted && poll.result?.options.length);
-
-  useEffect(() => {
-    setPollState(post.poll);
-    setSelectedOptionId(post.poll?.selected_option_id ?? null);
-  }, [post.poll]);
-
-  async function handleVoteSubmit(optionId?: number | string | null) {
-    const nextOptionId = optionId == null ? selectedOptionId : Number(optionId);
-    if (!poll || postId == null || nextOptionId == null || voteAction.isRunning) return;
-    if (authStatus !== "authenticated") {
-      setLoginPromptOpen(true);
-      return;
-    }
-
-    await voteAction.run(async () => {
-      const response = await votePost(postId, nextOptionId);
-      setSelectedOptionId(response.data.selected_option_id);
-      setPollState((currentPoll) =>
-        currentPoll
-          ? {
-              ...currentPoll,
-              has_voted: true,
-              selected_option_id: response.data.selected_option_id,
-              total_vote_count: response.data.result.total_vote_count,
-              result: response.data.result,
-            }
-          : currentPoll,
-      );
-    });
-  }
+  const { poll, selectedOptionId, setSelectedOptionId, canShowResults, vote, isRunning } = usePollVote({
+    postId,
+    poll: post.poll,
+    authStatus,
+    requireAuth: () => {
+      if (authStatus !== "authenticated") {
+        setLoginPromptOpen(true);
+        return false;
+      }
+      return true;
+    },
+  });
 
   return (
     <>
@@ -83,10 +59,10 @@ export function PostCard({ post }: { post: Post }) {
             options={poll.options.map((option) => ({ id: option.option_id, label: option.content }))}
             selectedOptionId={canShowResults ? poll.selected_option_id : selectedOptionId}
             onSelect={(optionId) => setSelectedOptionId(Number(optionId))}
-            onSubmit={handleVoteSubmit}
-            onResultSelect={handleVoteSubmit}
-            submitDisabled={selectedOptionId == null || voteAction.isRunning}
-            submitLoading={voteAction.isRunning}
+            onSubmit={vote}
+            onResultSelect={vote}
+            submitDisabled={selectedOptionId == null || isRunning}
+            submitLoading={isRunning}
             results={canShowResults
               ? poll.result?.options.map((result) => ({
                   optionId: result.option_id,

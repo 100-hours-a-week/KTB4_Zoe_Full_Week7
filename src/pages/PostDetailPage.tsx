@@ -14,7 +14,8 @@ import { useAsyncAction } from "@/hooks/useAsyncAction";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import { usePostDetail } from "@/hooks/usePostDetail";
 import { usePostLike } from "@/hooks/usePostLike";
-import { usePostVote } from "@/hooks/usePostVote";
+import { usePollVote } from "@/hooks/usePollVote";
+import type { Poll } from "@/types/domain";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAssetUrl } from "@/utils/format";
 
@@ -44,13 +45,23 @@ export function PostDetailPage() {
     setPost,
     requireAuth,
   });
+  const handlePollSuccess = useCallback((nextPoll: Poll) => {
+    setPost((currentPost) => currentPost ? { ...currentPost, poll: nextPoll } : currentPost);
+  }, [setPost]);
   const {
+    poll,
     selectedOptionId,
     setSelectedOptionId,
     canShowResults,
     vote,
     isRunning: isVoteRunning,
-  } = usePostVote({ postId, post, authStatus, setPost, requireAuth });
+  } = usePollVote({
+    postId,
+    poll: post?.poll,
+    authStatus,
+    requireAuth,
+    onSuccess: handlePollSuccess,
+  });
 
   const updateCommentCount = useCallback((delta: number) => {
     setPost((currentPost) => {
@@ -73,7 +84,6 @@ export function PostDetailPage() {
 
   const writerId = post ? getWriterId(post) : undefined;
   const isOwner = Boolean(user?.userId && writerId === user.userId);
-  const poll = post?.poll;
   const viewCount = post?.view_count ?? post?.viewCount ?? 0;
 
   return (
