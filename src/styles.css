@@ -472,6 +472,14 @@
     @apply bg-primary-soft text-primary-hover;
   }
 
+  .status-badge--completed {
+    @apply bg-primary-soft text-primary-hover;
+  }
+
+  .status-badge--unvoted {
+    @apply bg-soft text-muted;
+  }
+
   .post-card h2 {
     @apply mt-[14px] text-lg font-extrabold tracking-[-0.01em] text-text;
   }
