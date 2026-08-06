@@ -38,7 +38,7 @@ export function validateNickname(nickname: string) {
 }
 
 export function validateProfileImage(profileImage: File | null) {
-  if (!profileImage) return "프로필 이미지를 등록해주세요.";
+  if (!profileImage) return null;
   if (!profileImage.type.startsWith("image/")) return "이미지 파일만 등록할 수 있습니다.";
   return "";
 }
