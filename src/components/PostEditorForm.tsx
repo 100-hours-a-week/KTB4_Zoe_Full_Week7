@@ -82,6 +82,8 @@ export function PostEditorForm({
   const submitAction = useAsyncAction();
   const draftAction = useAsyncAction();
   const latestValuesRef = useRef(values);
+  const autoSaveToastTimeoutRef = useRef<number | null>(null);
+  const [autoSaveToastMessage, setAutoSaveToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     setValues({
@@ -98,13 +100,42 @@ export function PostEditorForm({
     latestValuesRef.current = values;
   }, [values]);
 
+  useEffect(() => () => {
+    if (autoSaveToastTimeoutRef.current !== null) {
+      window.clearTimeout(autoSaveToastTimeoutRef.current);
+    }
+  }, []);
+
+  function showAutoSaveToast() {
+    setAutoSaveToastMessage("임시저장 완료");
+    if (autoSaveToastTimeoutRef.current !== null) {
+      window.clearTimeout(autoSaveToastTimeoutRef.current);
+    }
+    autoSaveToastTimeoutRef.current = window.setTimeout(() => {
+      setAutoSaveToastMessage(null);
+      autoSaveToastTimeoutRef.current = null;
+    }, 1_800);
+  }
+
+  function handleDraftButtonClick() {
+    if (!onDraftSave) return;
+    if (!values.title.trim() && !values.content.trim() && !values.image) return;
+
+    void draftAction.run(async () => {
+      await onDraftSave(values);
+      showAutoSaveToast();
+    });
+  }
+
   useEffect(() => {
     if (!onDraftSave) return;
 
     const timerId = window.setInterval(() => {
       const currentValues = latestValuesRef.current;
       if (currentValues.title.trim() || currentValues.content.trim() || currentValues.image) {
-        onDraftSave(currentValues).catch(console.error);
+        onDraftSave(currentValues)
+          .then(showAutoSaveToast)
+          .catch(console.error);
       }
     }, 60_000);
 
@@ -160,6 +191,13 @@ export function PostEditorForm({
             variant="error"
             icon="alert"
             className="editor-toast"
+          />
+        ) : null}
+        {autoSaveToastMessage ? (
+          <Toast
+            message={autoSaveToastMessage}
+            icon="successCheck"
+            className="editor-toast editor-toast--success"
           />
         ) : null}
         <div className="editor-card">
@@ -242,7 +280,7 @@ export function PostEditorForm({
               variant="ghost"
               isLoading={draftAction.showLoading}
               loadingLabel="임시저장 중"
-              onClick={() => draftAction.run(() => onDraftSave(values))}
+              onClick={handleDraftButtonClick}
             >
               임시저장
             </Button>
