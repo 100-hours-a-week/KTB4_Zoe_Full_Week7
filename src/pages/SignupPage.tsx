@@ -47,7 +47,6 @@ export function SignupPage() {
   const isValid = useMemo(
     () => {
       const hasRequiredInput =
-        Boolean(profileImage) &&
         Boolean(nickname.trim()) &&
         Boolean(email.trim()) &&
         Boolean(password.trim()) &&
@@ -55,7 +54,6 @@ export function SignupPage() {
 
       return (
         hasRequiredInput &&
-        helpers.profileImage === "" &&
         nicknameValidation.isValid &&
         emailValidation.isValid &&
         passwordValidation.isValid &&
@@ -123,16 +121,15 @@ export function SignupPage() {
 
         <form className="auth-card signup-card" onSubmit={handleSubmit}>
           <label className="profile-upload">
+            <div className="form-label">
+              프로필 사진
+            </div>
             <span className="profile-preview">
               {preview ? (
                 <img src={preview} alt="프로필 미리보기" />
               ) : (
                 <Icon name="camera" size="xl" className="profile-preview-icon" />
               )}
-            </span>
-            <span className="profile-upload-text">
-              <span>프로필 이미지를</span>
-              <span>등록해주세요</span>
             </span>
             <input
               type="file"

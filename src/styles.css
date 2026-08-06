@@ -360,7 +360,7 @@
   }
 
   .profile-upload {
-    @apply flex cursor-pointer items-center gap-4 text-[13px] text-muted;
+    @apply flex flex-col cursor-pointer items-start gap-4 text-[13px] text-muted;
   }
 
   .profile-upload-text {
