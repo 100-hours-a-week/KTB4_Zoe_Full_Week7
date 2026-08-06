@@ -3,7 +3,6 @@ import { Avatar } from "@/components/Avatar";
 import { Icon } from "@/components/Icon";
 import type { Post } from "@/types/domain";
 import { getPostId } from "@/utils/format";
-import { savePostForEdit } from "@/utils/postEditStorage";
 
 type PostDetailHeaderProps = {
   post: Post;
@@ -30,7 +29,6 @@ export function PostDetailHeader({ post, isOwner, onDelete }: PostDetailHeaderPr
             <Link
               to={`/posts/${getPostId(post)}/edit`}
               state={{ post }}
-              onClick={() => savePostForEdit(post)}
             >
               <Icon name="edit" size="sm" />
               수정

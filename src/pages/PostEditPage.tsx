@@ -9,7 +9,6 @@ import {
 } from "@/components/PostEditorForm";
 import { RequireAuth } from "@/components/RequireAuth";
 import type { ApiError, Post } from "@/types/domain";
-import { clearSavedPostForEdit, getSavedPostForEdit } from "@/utils/postEditStorage";
 import { countFormat } from "@/utils/format";
 
 export function PostEditPage() {
@@ -17,7 +16,7 @@ export function PostEditPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [post, setPost] = useState<Post | null>(
-    (location.state as { post?: Post } | null)?.post ?? getSavedPostForEdit(postId),
+    (location.state as { post?: Post } | null)?.post ?? null,
   );
   const [helper, setHelper] = useState("");
   const [pollLocked, setPollLocked] = useState(false);
@@ -45,7 +44,6 @@ export function PostEditPage() {
         },
       );
       await updatePost(postId, createPostUpdateFormData(values, Boolean(pollChanged)));
-      clearSavedPostForEdit(postId);
       navigate(`/posts/${postId}`);
     } catch (error) {
       const apiError = error as ApiError;
