@@ -1,8 +1,8 @@
 export function validateEmail(email: string) {
   if (!email.trim()) return "이메일을 입력해주세요.";
 
-  const emailRegex = /^[A-Za-z@.]+$/;
-  const emailFormatRegex = /^[A-Za-z]+@[A-Za-z]+\.[A-Za-z.]+$/;
+  const emailRegex = /^[A-Za-z0-9@.]+$/;
+  const emailFormatRegex = /^[A-Za-z0-9]+@[A-Za-z0-9]+\.[A-Za-z.]+$/;
 
   if (!emailRegex.test(email) || !emailFormatRegex.test(email)) {
     return "올바른 이메일 주소 형식을 입력해주세요. (예: example@example.com)";
