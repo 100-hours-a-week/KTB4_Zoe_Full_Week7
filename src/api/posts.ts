@@ -1,5 +1,5 @@
 import { apiClient } from "@/api/client";
-import type { ApiEnvelope, LikeResponse, Post, PostsPageData } from "@/types/domain";
+import type { ApiEnvelope, LikeResponse, PollVoteResponse, Post, PostsPageData } from "@/types/domain";
 
 export function getPosts(size = 20, cursor?: string | number | null) {
   const params = new URLSearchParams({ size: String(size) });
@@ -47,5 +47,12 @@ export function likePost(postId: string | number) {
 export function unlikePost(postId: string | number) {
   return apiClient<ApiEnvelope<LikeResponse>>(`/likes/posts/${postId}`, {
     method: "DELETE",
+  });
+}
+
+export function votePost(postId: string | number, optionId: number) {
+  return apiClient<ApiEnvelope<PollVoteResponse>>(`/posts/${postId}/poll/vote`, {
+    method: "PUT",
+    body: { option_id: optionId },
   });
 }

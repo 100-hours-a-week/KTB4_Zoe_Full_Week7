@@ -6,6 +6,7 @@ import {
   getPost,
   likePost,
   unlikePost,
+  votePost,
 } from "@/api/posts";
 import {
   createComment,
@@ -20,6 +21,7 @@ import { Icon } from "@/components/Icon";
 import { Layout } from "@/components/Layout";
 import { LoginPromptModal } from "@/components/LoginPromptModal";
 import { Modal } from "@/components/Modal";
+import { VoteCard } from "@/components/VoteCard";
 import { CommentListSkeleton, PostDetailSkeleton } from "@/components/skeletons/Skeletons";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAsyncAction } from "@/hooks/useAsyncAction";
@@ -46,6 +48,7 @@ export function PostDetailPage() {
   const { authStatus, user } = useAuth();
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [post, setPost] = useState<Post | null>(null);
+  const [selectedOptionId, setSelectedOptionId] = useState<number | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentPage, setCommentPage] = useState(0);
   const [hasNextComment, setHasNextComment] = useState(true);
@@ -62,6 +65,7 @@ export function PostDetailPage() {
   const showCommentSkeleton = useDelayedLoading(isCommentLoading);
   const showNextCommentSkeleton = useDelayedLoading(isNextCommentLoading);
   const likeAction = useAsyncAction();
+  const voteAction = useAsyncAction();
   const commentAction = useAsyncAction();
   const deleteAction = useAsyncAction();
 
@@ -119,6 +123,12 @@ export function PostDetailPage() {
   const isOwner = Boolean(user?.userId && post && getWriterId(post) === user.userId);
   const likeCount = post?.like_count ?? post?.likeCount ?? 0;
   const isLiked = Boolean(post?.is_liked ?? post?.liked);
+  const poll = post?.poll;
+  const canShowResults = authStatus === "authenticated" && Boolean(poll?.has_voted && poll.result?.options.length);
+
+  useEffect(() => {
+    setSelectedOptionId(post?.poll?.selected_option_id ?? null);
+  }, [post?.poll]);
 
   function requireAuth() {
     if (authStatus === "authenticated") return true;
@@ -172,6 +182,30 @@ export function PostDetailPage() {
     });
   }
 
+  async function handleVote(optionId?: number | string | null) {
+    const nextOptionId = optionId == null ? selectedOptionId : Number(optionId);
+    if (!poll || nextOptionId == null || voteAction.isRunning || !requireAuth()) return;
+
+    await voteAction.run(async () => {
+      const response = await votePost(postId, nextOptionId);
+      setSelectedOptionId(response.data.selected_option_id);
+      setPost((currentPost) =>
+        currentPost?.poll
+          ? {
+              ...currentPost,
+              poll: {
+                ...currentPost.poll,
+                has_voted: true,
+                selected_option_id: response.data.selected_option_id,
+                total_vote_count: response.data.result.total_vote_count,
+                result: response.data.result,
+              },
+            }
+          : currentPost,
+      );
+    });
+  }
+
   async function handleCommentSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (!commentInput.trim() || !requireAuth()) return;
@@ -217,7 +251,7 @@ export function PostDetailPage() {
           </section>
         ) : null}
         {!isPostLoading && post ? (
-          <>
+          <div className="detail-card-layout">
             <article className="detail-card">
               <header className="detail-author">
                 <Avatar src={writer.profile_image ?? writer.profileImage} nickname={writer.nickname} size="lg" />
@@ -254,48 +288,26 @@ export function PostDetailPage() {
                 <img className="detail-image" src={getAssetUrl(imageUrl)} alt="" key={imageUrl} />
               ))}
 
-              {/* v2: vote result */}
-              {/* <section className="vote-result" aria-label="투표 결과">
-                <div className="vote-result-head">
-                  <strong>최종 결과</strong>
-                  <span>마감됨</span>
-                </div>
-                {[
-                  ["코랄 핑크", 46, true],
-                  ["민트 그린", 33, false],
-                  ["투명 글리터", 21, false],
-                ].map(([label, percent, active]) => (
-                  <div className="vote-option" key={String(label)}>
-                    <div>
-                      <strong className={active ? "active" : ""}>
-                        {active ? <Icon name="check" size="sm" /> : null}
-                        {label}
-                      </strong>
-                      <b>{percent}%</b>
-                    </div>
-                    <span>
-                      <i style={{ width: `${percent}%` }} />
-                    </span>
-                  </div>
-                ))}
-                <p>총 340명 참여 · 2026년 7월 11일 마감</p>
-              </section> */}
-
-              <div className="like-row">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  isLoading={likeAction.showLoading}
-                  loadingLabel="좋아요 처리 중"
-                  onClick={handleLike}
-                  aria-label={`좋아요 ${countFormat(likeCount)}개`}
-                  aria-pressed={isLiked}
-                  className={isLiked ? "like-button like-button--liked" : "like-button"}
-                >
-                  <Icon name={isLiked ? "heartDetailFilled" : "heartDetail"} size="lg" />
-                  {countFormat(likeCount)}
-                </Button>
-              </div>
+              {poll?.options.length ? (
+                <VoteCard
+                  options={poll.options.map((option) => ({ id: option.option_id, label: option.content }))}
+                  selectedOptionId={canShowResults ? poll.selected_option_id : selectedOptionId}
+                  onSelect={(optionId) => setSelectedOptionId(Number(optionId))}
+                  onSubmit={handleVote}
+                  onResultSelect={handleVote}
+                  submitDisabled={selectedOptionId == null || voteAction.isRunning}
+                  submitLoading={voteAction.isRunning}
+                  participationCount={poll.total_vote_count}
+                  showSubmit={!canShowResults}
+                  results={canShowResults
+                    ? poll.result?.options.map((result) => ({
+                        optionId: result.option_id,
+                        voteRate: result.vote_rate,
+                        voteCount: result.vote_count,
+                      }))
+                    : undefined}
+                />
+              ) : null}
 
               <section className="comments-section">
                 <h2>댓글 {post.comment_count ?? post.commentCount ?? comments.length}</h2>
@@ -352,7 +364,29 @@ export function PostDetailPage() {
                 <div ref={sentinelRef} />
               </section>
             </article>
-          </>
+            <div className="detail-like-control">
+              <Button
+                type="button"
+                variant="ghost"
+                isLoading={likeAction.showLoading}
+                loadingLabel="좋아요 처리 중"
+                onClick={handleLike}
+                aria-label={`좋아요 ${countFormat(likeCount)}개`}
+                aria-pressed={isLiked}
+                className={isLiked ? "detail-like-button detail-like-button--liked" : "detail-like-button"}
+              >
+                {isLiked ? (
+                  <span className="detail-like-icon" aria-hidden="true">
+                    <Icon name="heartDetailFilled" size="lg" className="detail-like-icon-fill" />
+                    <Icon name="heartDetail" size="lg" className="detail-like-icon-outline" />
+                  </span>
+                ) : (
+                  <Icon name="heartDetail" size="lg" />
+                )}
+              </Button>
+              <span className="detail-like-count">{countFormat(likeCount)}</span>
+            </div>
+          </div>
         ) : null}
       </section>
 

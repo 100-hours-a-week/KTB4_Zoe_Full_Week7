@@ -28,6 +28,38 @@ export type Writer = {
   profileImage?: string | null;
 };
 
+export type PollOption = {
+  option_id: number;
+  content: string;
+};
+
+export type PollResultOption = {
+  option_id: number;
+  vote_count: number;
+  vote_rate: string;
+};
+
+export type Poll = {
+  poll_id: number;
+  options: PollOption[];
+  has_voted: boolean;
+  total_vote_count: number;
+  selected_option_id?: number;
+  result?: {
+    total_vote_count?: number;
+    options: PollResultOption[];
+  };
+};
+
+export type PollVoteResponse = {
+  poll_id: number;
+  selected_option_id: number;
+  result: {
+    total_vote_count: number;
+    options: PollResultOption[];
+  };
+};
+
 export type Post = {
   post_id?: number;
   id?: number;
@@ -50,6 +82,7 @@ export type Post = {
   viewCount?: number;
   is_liked?: boolean;
   liked?: boolean;
+  poll?: Poll;
 };
 
 export type PostsPageData = {

@@ -472,6 +472,14 @@
     @apply bg-primary-soft text-primary-hover;
   }
 
+  .status-badge--completed {
+    @apply bg-primary-soft text-primary-hover;
+  }
+
+  .status-badge--unvoted {
+    @apply bg-soft text-muted;
+  }
+
   .post-card h2 {
     @apply mt-[14px] text-lg font-extrabold tracking-[-0.01em] text-text;
   }
@@ -495,6 +503,10 @@
 
   .detail-section {
     @apply grid;
+  }
+
+  .detail-card-layout {
+    @apply relative;
   }
 
   .detail-card {
@@ -553,6 +565,164 @@
 
   .detail-image {
     @apply mt-6 w-full rounded-2xl object-cover;
+  }
+
+  .detail-like-control {
+    @apply absolute right-[-70px] top-[15px] grid justify-items-center;
+  }
+
+  .detail-like-button {
+    @apply grid h-11 w-11 place-items-center rounded-full bg-white p-0 text-primary;
+    border: 1px solid #f1c7b3;
+  }
+
+  .detail-like-button .icon {
+    @apply h-[18px] w-[18px];
+  }
+
+  .detail-like-icon {
+    @apply relative block h-[18px] w-[18px];
+  }
+
+  .detail-like-icon .icon {
+    @apply absolute inset-0;
+  }
+
+  .detail-like-icon-fill {
+    filter: brightness(0) invert(1);
+  }
+
+  .detail-like-icon-outline {
+    @apply z-10;
+  }
+
+  .detail-like-button--liked {
+    @apply border-white bg-primary;
+  }
+
+  .detail-like-button--liked:hover {
+    @apply bg-primary;
+  }
+
+  .detail-like-count {
+    @apply mt-1 text-[15px] font-bold leading-[normal] text-primary;
+  }
+
+  .vote-card {
+    @apply rounded-[18px] bg-white p-6;
+  }
+
+  .vote-card--list {
+    @apply mt-4 border border-border p-4;
+  }
+
+  .vote-card--list .vote-options {
+    @apply gap-2 pt-0;
+  }
+
+  .vote-card--list .vote-option-button {
+    @apply h-[42px] px-3.5 text-sm;
+  }
+
+  .vote-card--list .vote-option-button.is-selected {
+    @apply px-3;
+  }
+
+  .vote-card--list .vote-submit-button {
+    @apply mt-3 h-[42px] text-sm;
+  }
+
+  .vote-options {
+    @apply grid gap-2.5 pt-[18px];
+  }
+
+  .vote-option-button {
+    @apply flex h-[50px] w-full items-center gap-4 rounded-xl border border-[#e5e8eb] bg-white px-[19px] py-px text-left text-[15px] font-semibold text-text-soft;
+  }
+
+  .vote-option-button.is-selected {
+    @apply border-2 border-primary px-5 py-0 text-primary;
+  }
+
+  .radio-button {
+    @apply grid h-4 w-4 shrink-0 place-items-center rounded-lg border border-[#e4e4e7];
+  }
+
+  .radio-button.is-checked {
+    @apply border-primary;
+  }
+
+  .radio-button span {
+    @apply h-2.5 w-2.5 rounded-full bg-primary;
+  }
+
+  .vote-option-label {
+    @apply truncate;
+  }
+
+  .vote-submit-button {
+    @apply mt-4 h-[50px] min-h-0 w-full rounded-xl px-0 py-0 text-[15px];
+  }
+
+  .vote-participation {
+    @apply mt-3 flex items-center gap-1.5 px-2.5 text-xs font-bold text-muted-soft;
+  }
+
+  .vote-result-option {
+    @apply relative block h-[50px] w-full cursor-pointer overflow-hidden rounded-xl bg-soft text-left text-sm;
+  }
+
+  .vote-result-option:disabled {
+    @apply cursor-default;
+  }
+
+  .vote-result-fill {
+    @apply absolute inset-y-0 left-0 rounded-l-xl bg-primary-soft;
+    width: var(--vote-rate);
+    animation: vote-result-fill 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .vote-result-option strong {
+    @apply absolute left-[19px] top-1/2 z-10 inline-flex -translate-y-1/2 items-center gap-2.5 font-semibold text-text-soft;
+  }
+
+  .vote-result-option b {
+    @apply absolute right-[13px] top-1/2 z-10 -translate-y-1/2;
+  }
+
+  .vote-result-option.is-leading .vote-result-fill {
+    @apply bg-primary;
+  }
+
+  .vote-result-option.is-leading strong {
+    @apply text-white;
+  }
+
+  .vote-result-option.is-leading b {
+    @apply text-primary;
+  }
+
+  .vote-result-option.is-leading.is-full b {
+    @apply text-white;
+  }
+
+  .vote-result-option:not(.is-leading) b {
+    @apply text-muted;
+  }
+
+  .vote-result-option.is-leading .vote-result-check {
+    filter: brightness(0) invert(1);
+  }
+
+  @keyframes vote-result-fill {
+    from { width: 0; }
+    to { width: var(--vote-rate); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vote-result-fill {
+      animation: none;
+    }
   }
 
   .vote-result {
@@ -711,6 +881,46 @@
 
   .editor-textarea {
     @apply min-h-48 resize-y rounded-xl border border-border bg-white p-4 text-sm leading-7 outline-none focus:ring-4 focus:ring-primary/10;
+  }
+
+  .poll-editor {
+    @apply rounded-[18px] border border-dashed border-[#efb79e] bg-[#fffbf8] p-6;
+  }
+
+  .poll-editor-heading {
+    @apply flex items-center text-[15px] font-extrabold text-text-strong;
+  }
+
+  .poll-editor-heading span {
+    @apply ml-1 font-semibold text-muted-soft;
+  }
+
+  .poll-option-list {
+    @apply grid gap-2.5 pt-4;
+  }
+
+  .poll-option-row {
+    @apply flex items-center gap-2.5;
+  }
+
+  .poll-option-number {
+    @apply grid h-[22px] w-[22px] shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-white;
+  }
+
+  .poll-option-input {
+    @apply h-[42px] min-w-0 flex-1 rounded-xl bg-soft px-3.5 text-sm text-text-strong outline-none;
+  }
+
+  .poll-option-remove {
+    @apply grid h-4 w-4 shrink-0 place-items-center bg-transparent text-lg leading-none text-muted-soft disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .poll-option-add {
+    @apply mt-3 flex h-[42px] w-full items-center justify-center gap-1.5 rounded-[14px] border border-dashed border-[#e5e8eb] bg-transparent text-sm font-bold text-primary-hover disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .poll-option-add span {
+    @apply text-base leading-none;
   }
 
   .file-field {
@@ -992,6 +1202,39 @@
 
   .toast--error {
     @apply bg-danger;
+  }
+
+  .editor-toast {
+    @apply static flex w-full translate-x-0 items-center gap-2 rounded-[14px] border border-[#f1dccf] bg-[#fff6f0] px-[17px] py-[13px] text-[13px] font-normal text-[#c6421a] shadow-none;
+    animation: editor-toast-pop 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .editor-toast .icon {
+    @apply h-4 w-4 shrink-0;
+  }
+
+  @keyframes editor-toast-pop {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px) scale(0.92);
+    }
+    55% {
+      opacity: 1;
+      transform: translateY(2px) scale(1.03);
+    }
+    80% {
+      transform: translateY(-1px) scale(0.99);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editor-toast {
+      animation: none;
+    }
   }
 
   .skeleton-card {
