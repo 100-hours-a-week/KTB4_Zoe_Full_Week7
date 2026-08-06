@@ -55,6 +55,7 @@ export function Header({ backTo }: HeaderProps) {
                   </div>
                 </div>
                 <Link to="/mypage">마이페이지</Link>
+                <Link to="/posts/new" state={{ loadDraft: true }}>임시 글</Link>
                 <Link to="/profile/edit">정보 수정하기</Link>
                 <button type="button" onClick={handleLogout}>
                   로그아웃하기

@@ -1,5 +1,13 @@
 import { apiClient } from "@/api/client";
-import type { ApiEnvelope, LikeResponse, PollVoteResponse, Post, PostsPageData } from "@/types/domain";
+import type {
+  ApiEnvelope,
+  LikeResponse,
+  PollVoteResponse,
+  Post,
+  PostDraft,
+  PostDraftRequest,
+  PostsPageData,
+} from "@/types/domain";
 
 export function getPosts(size = 20, cursor?: string | number | null) {
   const params = new URLSearchParams({ size: String(size) });
@@ -31,11 +39,16 @@ export function deletePost(postId: string | number) {
   });
 }
 
-export function savePostDraft(formData: FormData) {
-  return apiClient<null>("/posts/drafts", {
+export function savePostDraft(values: PostDraftRequest) {
+  return apiClient<ApiEnvelope<PostDraft>>("/posts/drafts", {
     method: "PUT",
-    body: formData,
+    body: values,
   });
+}
+
+export function getPostDraft(postId?: string | number) {
+  const query = postId == null ? "" : `?post_id=${encodeURIComponent(String(postId))}`;
+  return apiClient<ApiEnvelope<PostDraft>>(`/posts/drafts${query}`);
 }
 
 export function likePost(postId: string | number) {

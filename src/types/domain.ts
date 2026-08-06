@@ -85,6 +85,25 @@ export type Post = {
   poll?: Poll;
 };
 
+export type PostDraft = {
+  draft_id?: number;
+  draftId?: number;
+  post_id?: number | null;
+  postId?: number | null;
+  title?: string;
+  content?: string;
+  poll_options?: string[];
+  pollOptions?: string[];
+  poll?: Poll;
+};
+
+export type PostDraftRequest = {
+  post_id?: number;
+  title: string;
+  content: string;
+  poll_options?: string[];
+};
+
 export type PostsPageData = {
   posts: Post[];
   next_cursor: string | number | null;

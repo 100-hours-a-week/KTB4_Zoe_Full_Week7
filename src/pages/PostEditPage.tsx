@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { getPost, updatePost } from "@/api/posts";
+import { getPost, savePostDraft, updatePost } from "@/api/posts";
 import { Layout } from "@/components/Layout";
 import {
   createPostUpdateFormData,
@@ -57,6 +57,24 @@ export function PostEditPage() {
     }
   }
 
+  async function handleDraftSave(values: PostEditorValues) {
+    if (!values.title.trim() && !values.content.trim() && !values.image) return;
+
+    const draftPostId = post?.post_id ?? post?.id ?? Number(postId);
+    if (!Number.isFinite(draftPostId)) return;
+
+    const pollOptions = values.pollOptions
+      ?.map((option) => option.content.trim())
+      .filter(Boolean);
+
+    await savePostDraft({
+      post_id: draftPostId,
+      title: values.title.trim(),
+      content: values.content.trim(),
+      ...(pollOptions?.length ? { poll_options: pollOptions } : {}),
+    });
+  }
+
   return (
     <RequireAuth>
       <Layout narrow backTo={`/posts/${postId}`}>
@@ -80,6 +98,7 @@ export function PostEditPage() {
             ? `이미 ${countFormat(post?.poll?.total_vote_count ?? 0)}명이 투표에 참여했어요. 투표 항목 수정은 제한됩니다.`
             : null}
           onSubmit={handleSubmit}
+          onDraftSave={handleDraftSave}
         />
       </Layout>
     </RequireAuth>
