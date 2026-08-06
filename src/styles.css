@@ -505,6 +505,10 @@
     @apply grid;
   }
 
+  .detail-card-layout {
+    @apply relative;
+  }
+
   .detail-card {
     @apply rounded-[20px] border border-border bg-white p-[41px];
   }
