@@ -29,6 +29,8 @@ export function PostCreatePage() {
         <PostEditorForm
           title="새 글 쓰기"
           submitText="게시하기"
+          description="궁금한 걸 투표로 물어보세요"
+          enablePoll
           helper={helper}
           onSubmit={handleSubmit}
           onDraftSave={handleDraftSave}
