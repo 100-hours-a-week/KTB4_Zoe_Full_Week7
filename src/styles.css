@@ -1033,6 +1033,10 @@
     @apply border-b-2 border-primary pb-[14px] font-extrabold text-text;
   }
 
+  .mypage-tabs button:disabled {
+    @apply cursor-wait opacity-60;
+  }
+
   .mypage-activity-list {
     @apply grid gap-3 pt-5;
   }
@@ -1043,14 +1047,6 @@
 
   .mypage-card-meta {
     @apply flex items-center gap-2 text-xs text-muted-soft;
-  }
-
-  .mypage-card-status {
-    @apply rounded-md bg-soft px-[9px] py-[3px] text-xs font-bold text-muted;
-  }
-
-  .mypage-card-status--active {
-    @apply bg-primary-soft text-primary-hover;
   }
 
   .mypage-activity-card > strong {
