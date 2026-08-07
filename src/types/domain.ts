@@ -20,6 +20,45 @@ export type ApiError = Error & {
   data?: ApiErrorData;
 };
 
+export type MyPageTab = "written" | "participated" | "liked";
+
+export type MyPageProfile = {
+  user_id: number;
+  nickname: string;
+  email: string;
+  profile_image: string | null;
+};
+
+export type MyPageStats = {
+  post_count: number;
+  poll_participation_count: number;
+  received_like_count: number;
+};
+
+export type MyPageActivityItem = {
+  post_id: number;
+  title: string;
+  activity_at: string;
+  post_created_at: string;
+  like_count: number;
+  comment_count: number;
+  participant_count: number;
+  is_voted: boolean;
+};
+
+export type MyPageActivityData = {
+  tab: MyPageTab;
+  items: MyPageActivityItem[];
+  next_cursor: string | null;
+  has_next: boolean;
+};
+
+export type MyPageData = {
+  profile: MyPageProfile;
+  stats: MyPageStats;
+  activity: MyPageActivityData;
+};
+
 export type Writer = {
   user_id?: number;
   id?: number;
